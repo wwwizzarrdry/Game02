@@ -1,3 +1,11 @@
-[gd_scene format=3 uid="uid://sje25mt2k15s"]
+[gd_scene load_steps=2 format=3 uid="uid://sje25mt2k15s"]
+
+[ext_resource type="PackedScene" uid="uid://bbqmrlsbgktgn" path="res://Scenes/Levels/LoadingScreen/LoadingScreen.tscn" id="1_pyhr5"]
 
 [node name="Main" type="Node2D"]
+
+[node name="LoadingScreen" parent="." instance=ExtResource("1_pyhr5")]
+offset_left = 691.178
+offset_top = 350.44
+offset_right = 691.178
+offset_bottom = 350.44
