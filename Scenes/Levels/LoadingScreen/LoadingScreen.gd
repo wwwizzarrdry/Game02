@@ -1,9 +1,9 @@
 extends Control
 
-@onready var title: Label = $PanelContainer/VBoxContainer/Title
-@onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/ProgressBar
-@onready var continue_btn: Button = $PanelContainer/VBoxContainer/ContinueBtn
-@onready var log: Label = $PanelContainer/VBoxContainer/Log
+@onready var title: Label = $PanelContainer/HBoxContainer/VBoxContainer/Title
+@onready var progress_bar: ProgressBar = $PanelContainer/HBoxContainer/VBoxContainer/ProgressBar
+@onready var continue_btn: Button = $PanelContainer/HBoxContainer/VBoxContainer/ContinueBtn
+@onready var logger: Label = $PanelContainer/HBoxContainer/VBoxContainer/Log
 @onready var NEXT_SCENE: PackedScene = preload("res://Scenes/Levels/LoadingScreen/LoadingScreen.tscn")
 
 var folder = "res://Assets/"
@@ -16,8 +16,8 @@ func _ready() -> void:
 	continue_btn.hide()
 	title.show()
 	progress_bar.show()
-	log.show()
-	log.text = ""
+	logger.show()
+	logger.text = ""
 
 
 	# Start loading the game resources here.
@@ -27,7 +27,7 @@ func _ready() -> void:
 		progress_bar.value = 0
 
 		for r in total_resources:
-			t = randf_range(0.01, 0.07)
+			t = randf_range(0.01, 0.03)
 			await(get_tree().create_timer(t).timeout)
 			load_resource(r)
 	else:
@@ -41,7 +41,7 @@ func get_all_files(path: String, file_ext := "", files := []):
 		var file_name = dir.get_next()
 		while file_name != "":
 			if dir.current_is_dir():
-				files = get_all_files(dir.get_current_dir() / file_name,  file_ext, files)
+				files = get_all_files(dir.get_current_dir() +  "/" + str(file_name),  file_ext, files)
 			else:
 				if file_ext and file_name.get_extension() != file_ext:
 					file_name = dir.get_next()
@@ -51,7 +51,7 @@ func get_all_files(path: String, file_ext := "", files := []):
 				#files.append(file_name)
 
 				# Full File Path
-				files.append(dir.get_current_dir()/file_name)
+				files.append(dir.get_current_dir() +  "/" + str(file_name))
 
 			file_name = dir.get_next()
 	else:
@@ -61,26 +61,28 @@ func get_all_files(path: String, file_ext := "", files := []):
 
 func load_resource(resource)->void:
 	progress_bar.value += 1
-	log.text = str(resource)
+	logger.text = str(resource)
+
 	if progress_bar.value == progress_bar.max_value:
 		progress_bar.hide()
-		log.hide()
+		logger.hide()
 		title.text = "Loading Complete!"
 		continue_btn.disabled = false
 		continue_btn.show()
 		continue_btn.grab_focus()
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	if progress_bar.value < progress_bar.max_value: return
 	if Input.is_anything_pressed():
 		continue_btn.grab_focus()
 		_on_continue_btn_pressed()
 
 func change_scene(scene):
-	get_tree().reload_current_scene()
-	#get_tree().change_scene_to_packed(scene)
+	#get_tree().call_deferred("reload_current_scene")
+	queue_free()
+	get_tree().call_deferred("change_scene_to_packed", scene)
 
 func _on_continue_btn_pressed() -> void:
 	continue_btn.disabled = true
 	await(get_tree().create_timer(1).timeout)
-	call_deferred("change_scene", NEXT_SCENE)
+	change_scene(NEXT_SCENE)
