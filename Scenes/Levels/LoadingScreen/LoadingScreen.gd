@@ -1,10 +1,10 @@
 extends Control
 
-@onready var title: Label = $PanelContainer/HBoxContainer/VBoxContainer/Title
-@onready var progress_bar: ProgressBar = $PanelContainer/HBoxContainer/VBoxContainer/ProgressBar
-@onready var continue_btn: Button = $PanelContainer/HBoxContainer/VBoxContainer/ContinueBtn
-@onready var logger: Label = $PanelContainer/HBoxContainer/VBoxContainer/Log
-@onready var NEXT_SCENE: PackedScene = preload("res://Scenes/Levels/LoadingScreen/LoadingScreen.tscn")
+@onready var title: Label = $PanelContainer/VBoxContainer/Title
+@onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/ProgressBar
+@onready var logger: Label = $PanelContainer/VBoxContainer/Log
+@onready var continue_btn: Button = $PanelContainer/VBoxContainer/ContinueBtn
+@onready var NEXT_SCENE: PackedScene = preload("res://Scenes/Levels/StartScreen/StartScreen.tscn")
 
 var folder = "res://Assets/"
 var total_resources = []
@@ -59,9 +59,9 @@ func get_all_files(path: String, file_ext := "", files := []):
 
 	return files
 
-func load_resource(resource)->void:
+func load_resource(r)->void:
 	progress_bar.value += 1
-	logger.text = str(resource)
+	logger.text = str(r)
 
 	if progress_bar.value == progress_bar.max_value:
 		progress_bar.hide()
@@ -77,12 +77,10 @@ func _input(_event: InputEvent) -> void:
 		continue_btn.grab_focus()
 		_on_continue_btn_pressed()
 
-func change_scene(scene):
-	#get_tree().call_deferred("reload_current_scene")
-	queue_free()
-	get_tree().call_deferred("change_scene_to_packed", scene)
+func change_scene():
+	get_tree().change_scene_to_packed(NEXT_SCENE)
 
 func _on_continue_btn_pressed() -> void:
 	continue_btn.disabled = true
 	await(get_tree().create_timer(1).timeout)
-	change_scene(NEXT_SCENE)
+	call_deferred("change_scene")
