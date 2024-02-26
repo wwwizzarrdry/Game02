@@ -25,6 +25,10 @@ window/stretch/scale_mode="integer"
 
 naming/scene_name_casing=1
 
+[filesystem]
+
+import/blender/enabled=false
+
 [layer_names]
 
 2d_render/layer_1="player"
