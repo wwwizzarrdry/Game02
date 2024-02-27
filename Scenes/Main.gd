@@ -4,12 +4,12 @@ extends Node
 	"1": {
 		viewport = $CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport,
 		camera = $CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Camera2D,
-		player =$CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Level01/Icon
+		player =$CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Level01/Player1
 	},
 	"2": {
 		viewport = $CanvasLayer/Control/HBoxContainer/P2_SubViewportContainer/SubViewport,
 		camera = $CanvasLayer/Control/HBoxContainer/P2_SubViewportContainer/SubViewport/Camera2D,
-		player =$CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Level01/Icon2
+		player =$CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Level01/Player2
 	}
 }
 

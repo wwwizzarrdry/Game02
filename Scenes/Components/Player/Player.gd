@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody2D
 
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
@@ -24,22 +25,11 @@ extends CharacterBody2D
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
 
-@onready var marker_head: Marker2D = $BodyParts/Shoulders/Marker_Head
-@onready var marker_backpack: Marker2D = $BodyParts/Shoulders/Marker_Backpack
-@onready var marker_arm_left: Marker2D = $BodyParts/Shoulders/Marker_Arm_Left
-@onready var marker_arm_right: Marker2D = $BodyParts/Shoulders/Marker_Arm_Right
-@onready var marker_rifle: Marker2D = $BodyParts/Shoulders/Marker_Rifle
-@onready var marker_shotgun: Marker2D = $BodyParts/Shoulders/Marker_Shotgun
-@onready var marker_pistol: Marker2D = $BodyParts/Shoulders/Marker_Pistol
-@onready var marker_uzi: Marker2D = $BodyParts/Shoulders/Marker_Uzi
-
-
-const sprite_scale = Vector2(0.1, 0.1)
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity: int = ProjectSettings.get_setting("physics/2d/default_gravity")
+var speed = 100.0
+var rotate_speed: float = 10.0
+var all_parts = []
+var all_guns = []
+var current_gun = 0
 
 func _ready() -> void:
 
@@ -49,38 +39,81 @@ func _ready() -> void:
 	arm_left.texture = player_skin["arm_left"]
 	head.texture = player_skin["head"]
 
-	scale = sprite_scale
-
 	for part in body_parts.get_children():
 		if part is Sprite2D:
-			part.scale = sprite_scale
+			all_parts.append(part)
 
+	var i = 0
 	for gun in guns.get_children():
-		gun.scale = sprite_scale
 		gun.visible = false
+		all_parts.append(gun)
+		all_guns.append(gun)
 		if gun.get_meta("gun_name") == character_gun:
+			current_gun = i
 			gun.visible = true
+		i += 1
 
-	backpack.position = marker_backpack.global_position
-	arm_right.position = marker_arm_right.global_position
-	arm_left.position = marker_arm_left.global_position
-	head.position = marker_head.global_position
-	shotgun.position = marker_shotgun.global_position
-	rifle.position = marker_rifle.global_position
-	uzi.position = marker_uzi.global_position
-	pistol.position = marker_pistol.global_position
+func _process(_delta: float) -> void:
+	pass
 
 func _physics_process(delta: float) -> void:
+	get_input(delta)
+	pass
 
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+func get_input(delta):
 
+	# Sprint
+	if Input.is_action_just_pressed('sprint'):
+		toggle_sprint()
+
+	#  Laser Sight
+	if Input.is_action_just_pressed('aim'):
+		show_laser(true)
+	if Input.is_action_just_released("aim"):
+		show_laser(false)
+
+	# Chane Weapon
+	if Input.is_action_just_pressed('change_weapon'):
+		change_weapons()
+
+	# Movement using left analog stick
+	var moveInput = Vector2(
+		-Input.get_action_strength("move_left") + Input.get_action_strength("move_right"),
+		+Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	).normalized()
+	velocity = moveInput * speed
 	move_and_slide()
 
-func set_outfit(part: String, res: AtlasTexture):
+	# Rotation using right analog stick
+	var lookDirection = Vector2(
+		-Input.get_action_strength("aim_left") + Input.get_action_strength("aim_right"),
+		+Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
+	).normalized()
+
+	if lookDirection.length() > 0.1:
+		rotation = lerp_angle(rotation, lookDirection.angle(), rotate_speed * delta)
+
+func toggle_sprint() -> void:
+	if speed == 500:
+		set_move_speed(100)
+	else:
+		set_move_speed(500)
+
+func set_move_speed(s) -> void:
+	speed = s
+
+func change_weapons() -> void:
+	var next_gun = wrap(current_gun + 1, 0, all_guns.size() - 1)
+
+	for i in range(all_guns.size()):
+		all_guns[i].visible = false
+		if i == next_gun:
+			all_guns[i].visible = true
+	current_gun = next_gun
+	pass
+
+func show_laser(val) -> void:
+	$BodyParts/Laser.visible = val
+
+func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
