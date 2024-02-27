@@ -1,13 +1,13 @@
 [gd_scene load_steps=12 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/Player/Player.gd" id="1_g7upe"]
-[ext_resource type="Texture2D" uid="uid://eano0lkjb4wv" path="res://Scenes/Components/Player/BodyParts/Backpack_Green.tres" id="2_am51k"]
-[ext_resource type="Texture2D" uid="uid://drst0n1wrkxnn" path="res://Scenes/Components/Player/BodyParts/Shoulders_Green.tres" id="3_2ervg"]
-[ext_resource type="Texture2D" uid="uid://03qgqowetbdv" path="res://Scenes/Components/Player/BodyParts/Arm_Right_Green.tres" id="4_710w8"]
+[ext_resource type="Texture2D" uid="uid://bu2lwvdte4rax" path="res://Scenes/Components/Player/BodyParts/Arm_Left_Olive.tres" id="2_hntw5"]
+[ext_resource type="Texture2D" uid="uid://bb5fi4b4d5aja" path="res://Scenes/Components/Player/BodyParts/Backpack_Olive.tres" id="4_33vra"]
+[ext_resource type="Texture2D" uid="uid://dgglkg0e3ftew" path="res://Scenes/Components/Player/BodyParts/Head_Olive.tres" id="5_4whiq"]
 [ext_resource type="Texture2D" uid="uid://b0r1mv5v86rko" path="res://Scenes/Components/Weapons/Rifle.tres" id="5_8taew"]
-[ext_resource type="Texture2D" uid="uid://dwuvm3x61yld2" path="res://Scenes/Components/Player/BodyParts/Arm_Left_Green.tres" id="5_oqmj1"]
+[ext_resource type="Texture2D" uid="uid://3ghxccaiyiqd" path="res://Scenes/Components/Player/BodyParts/Shoulders_Olive.tres" id="6_2or20"]
 [ext_resource type="Texture2D" uid="uid://8rvxnvgtouj2" path="res://Scenes/Components/Weapons/Shotgun.tres" id="6_ncyvl"]
-[ext_resource type="Texture2D" uid="uid://b0pyo1xrdshcq" path="res://Scenes/Components/Player/BodyParts/Head_Beige.tres" id="6_p8rlt"]
+[ext_resource type="Texture2D" uid="uid://c13rq7nhaoibl" path="res://Scenes/Components/Player/BodyParts/Arm_Right_Olive.tres" id="7_atuji"]
 [ext_resource type="Texture2D" uid="uid://dgr1nblxv2hex" path="res://Scenes/Components/Weapons/Uzi.tres" id="7_qpg8o"]
 [ext_resource type="Texture2D" uid="uid://wj4aotcc44tr" path="res://Scenes/Components/Weapons/Pistol.tres" id="8_27udi"]
 
@@ -15,30 +15,34 @@
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_g7upe")
-player_skin = {
-"arm_left": ExtResource("5_oqmj1"),
-"arm_right": ExtResource("4_710w8"),
-"backpack": ExtResource("2_am51k"),
-"head": ExtResource("6_p8rlt"),
-"shoulders": ExtResource("3_2ervg")
-}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_mpxel")
 
 [node name="BodyParts" type="Node2D" parent="."]
 
+[node name="RayCast2D" type="RayCast2D" parent="BodyParts"]
+position = Vector2(46, 3)
+target_position = Vector2(1000, 0)
+collide_with_areas = true
+
+[node name="Laser" type="Line2D" parent="BodyParts"]
+visible = false
+points = PackedVector2Array(46, 3, 1042, 3)
+width = 2.0
+default_color = Color(1, 0.0235294, 0, 0.745098)
+
 [node name="Backpack" type="Sprite2D" parent="BodyParts"]
 position = Vector2(-16, 3.58433e-06)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("2_am51k")
+texture = ExtResource("4_33vra")
 metadata/position_locked = false
 
 [node name="Shoulders" type="Sprite2D" parent="BodyParts"]
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("3_2ervg")
+texture = ExtResource("6_2or20")
 metadata/position_locked = true
 
 [node name="Marker_Head" type="Marker2D" parent="BodyParts/Shoulders"]
@@ -68,26 +72,15 @@ position = Vector2(-15, 169)
 position = Vector2(11, 14)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("4_710w8")
+texture = ExtResource("7_atuji")
 metadata/position_locked = false
 
 [node name="Arm_Left" type="Sprite2D" parent="BodyParts"]
 position = Vector2(16, -10)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("5_oqmj1")
+texture = ExtResource("2_hntw5")
 metadata/position_locked = false
-
-[node name="RayCast2D" type="RayCast2D" parent="BodyParts"]
-position = Vector2(46, 3)
-target_position = Vector2(1000, 0)
-collide_with_areas = true
-
-[node name="Laser" type="Line2D" parent="BodyParts"]
-visible = false
-points = PackedVector2Array(46, 3, 1042, 3)
-width = 2.0
-default_color = Color(1, 0.0235294, 0, 0.745098)
 
 [node name="Guns" type="Node2D" parent="BodyParts"]
 position = Vector2(-1, 0)
@@ -130,7 +123,7 @@ metadata/position_locked = false
 [node name="Head" type="Sprite2D" parent="BodyParts"]
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("6_p8rlt")
+texture = ExtResource("5_4whiq")
 metadata/position_locked = false
 
 [node name="Camera2D" type="Camera2D" parent="."]

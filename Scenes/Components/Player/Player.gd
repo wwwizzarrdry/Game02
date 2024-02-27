@@ -2,7 +2,7 @@ class_name Player
 extends CharacterBody2D
 
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
-@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 0
+@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 200
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
 @export_enum("Pistol", "Uzi", "Rifle", "Shotgun") var character_gun: String = "Pistol"
 @export var player_skin: Dictionary = {
@@ -25,8 +25,12 @@ extends CharacterBody2D
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
 
-var speed = 100.0
 var rotate_speed: float = 10.0
+var speed = character_speed # increasing speed, also decreases traction
+var acceleration: float = 2000 # higher = more traction
+var friction: float = acceleration / speed
+
+
 var all_parts = []
 var all_guns = []
 var current_gun = 0
@@ -58,10 +62,11 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	get_input(delta)
+	set_move_direction(delta)
+	set_aim_direction(delta)
 	pass
 
-func get_input(delta):
-
+func get_input(_delta):
 	# Sprint
 	if Input.is_action_just_pressed('sprint'):
 		toggle_sprint()
@@ -76,14 +81,13 @@ func get_input(delta):
 	if Input.is_action_just_pressed('change_weapon'):
 		change_weapons()
 
-	# Movement using left analog stick
-	var moveInput = Vector2(
-		-Input.get_action_strength("move_left") + Input.get_action_strength("move_right"),
-		+Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	).normalized()
-	velocity = moveInput * speed
+func set_move_direction(delta: float) -> void:
+	friction = acceleration / speed
+	apply_traction(delta)
+	apply_friction(delta)
 	move_and_slide()
 
+func set_aim_direction(delta: float) -> void:
 	# Rotation using right analog stick
 	var lookDirection = Vector2(
 		-Input.get_action_strength("aim_left") + Input.get_action_strength("aim_right"),
@@ -93,9 +97,19 @@ func get_input(delta):
 	if lookDirection.length() > 0.1:
 		rotation = lerp_angle(rotation, lookDirection.angle(), rotate_speed * delta)
 
+func apply_traction(delta: float) -> void:
+	var traction: Vector2 = Vector2(
+		-Input.get_action_strength("move_left") + Input.get_action_strength("move_right"),
+		+Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	).normalized()
+	velocity += traction * acceleration * delta
+
+func apply_friction(delta: float) -> void:
+	velocity -= velocity * friction * delta
+
 func toggle_sprint() -> void:
-	if speed == 500:
-		set_move_speed(100)
+	if speed >= 500:
+		set_move_speed(200)
 	else:
 		set_move_speed(500)
 
@@ -103,7 +117,7 @@ func set_move_speed(s) -> void:
 	speed = s
 
 func change_weapons() -> void:
-	var next_gun = wrap(current_gun + 1, 0, all_guns.size() - 1)
+	var next_gun = wrap(current_gun + 1, 0, all_guns.size())
 
 	for i in range(all_guns.size()):
 		all_guns[i].visible = false
