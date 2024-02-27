@@ -1,3 +1,91 @@
-[gd_scene format=3 uid="uid://sje25mt2k15s"]
+[gd_scene load_steps=3 format=3 uid="uid://sje25mt2k15s"]
 
-[node name="Main" type="Node2D"]
+[ext_resource type="PackedScene" uid="uid://cflbxv05qgsce" path="res://Scenes/Levels/Level01/Level01.tscn" id="1_od576"]
+[ext_resource type="Script" path="res://Scenes/Main.gd" id="1_vpamu"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_vpamu")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="P1_SubViewportContainer" type="SubViewportContainer" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer"]
+disable_3d = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(576, 648)
+render_target_update_mode = 4
+
+[node name="Level01" parent="CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport" instance=ExtResource("1_od576")]
+
+[node name="Camera2D" type="Camera2D" parent="CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport"]
+
+[node name="sep" type="ColorRect" parent="CanvasLayer/Control/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+color = Color(0.00392157, 0.00392157, 0.00392157, 1)
+
+[node name="P2_SubViewportContainer" type="SubViewportContainer" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SubViewport" type="SubViewport" parent="CanvasLayer/Control/HBoxContainer/P2_SubViewportContainer"]
+disable_3d = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(576, 648)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="CanvasLayer/Control/HBoxContainer/P2_SubViewportContainer/SubViewport"]
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer2"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="CanvasLayer2/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="CanvasLayer2/Control/SubViewportContainer"]
+disable_3d = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="CanvasLayer2/Control/SubViewportContainer/SubViewport"]
