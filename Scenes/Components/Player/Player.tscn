@@ -1,0 +1,106 @@
+[gd_scene load_steps=12 format=3 uid="uid://dppgsdv33qh5"]
+
+[ext_resource type="Script" path="res://Scenes/Components/Player/Player.gd" id="1_g7upe"]
+[ext_resource type="Texture2D" uid="uid://eano0lkjb4wv" path="res://Scenes/Components/Player/BodyParts/Backpack_Green.tres" id="2_am51k"]
+[ext_resource type="Texture2D" uid="uid://drst0n1wrkxnn" path="res://Scenes/Components/Player/BodyParts/Shoulders_Green.tres" id="3_2ervg"]
+[ext_resource type="Texture2D" uid="uid://03qgqowetbdv" path="res://Scenes/Components/Player/BodyParts/Arm_Right_Green.tres" id="4_710w8"]
+[ext_resource type="Texture2D" uid="uid://b0r1mv5v86rko" path="res://Scenes/Components/Weapons/Rifle.tres" id="5_8taew"]
+[ext_resource type="Texture2D" uid="uid://dwuvm3x61yld2" path="res://Scenes/Components/Player/BodyParts/Arm_Left_Green.tres" id="5_oqmj1"]
+[ext_resource type="Texture2D" uid="uid://8rvxnvgtouj2" path="res://Scenes/Components/Weapons/Shotgun.tres" id="6_ncyvl"]
+[ext_resource type="Texture2D" uid="uid://b0pyo1xrdshcq" path="res://Scenes/Components/Player/BodyParts/Head_Beige.tres" id="6_p8rlt"]
+[ext_resource type="Texture2D" uid="uid://dgr1nblxv2hex" path="res://Scenes/Components/Weapons/Uzi.tres" id="7_qpg8o"]
+[ext_resource type="Texture2D" uid="uid://wj4aotcc44tr" path="res://Scenes/Components/Weapons/Pistol.tres" id="8_27udi"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
+
+[node name="Player" type="CharacterBody2D"]
+rotation = -1.5708
+script = ExtResource("1_g7upe")
+player_skin = {
+"arm_left": ExtResource("5_oqmj1"),
+"arm_right": ExtResource("4_710w8"),
+"backpack": ExtResource("2_am51k"),
+"head": ExtResource("6_p8rlt"),
+"shoulders": ExtResource("3_2ervg")
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_mpxel")
+
+[node name="BodyParts" type="Node" parent="."]
+
+[node name="Backpack" type="Sprite2D" parent="BodyParts"]
+position = Vector2(-82, 3.58433e-06)
+rotation = -1.5708
+texture = ExtResource("2_am51k")
+
+[node name="Shoulders" type="Sprite2D" parent="BodyParts"]
+rotation = -1.5708
+texture = ExtResource("3_2ervg")
+
+[node name="Marker_Head" type="Marker2D" parent="BodyParts/Shoulders"]
+
+[node name="Marker_Backpack" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(1.52588e-05, -82)
+
+[node name="Marker_Arm_Left" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(48, 80)
+
+[node name="Marker_Arm_Right" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-65, 59)
+
+[node name="Marker_Rifle" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-12, 116)
+
+[node name="Marker_Shotgun" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-12, 116)
+
+[node name="Marker_Pistol" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-15, 169)
+
+[node name="Marker_Uzi" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-15, 169)
+
+[node name="Arm_Right" type="Sprite2D" parent="BodyParts"]
+position = Vector2(59, 65)
+rotation = -1.5708
+texture = ExtResource("4_710w8")
+
+[node name="Arm_Left" type="Sprite2D" parent="BodyParts"]
+position = Vector2(80, -49)
+rotation = -1.5708
+texture = ExtResource("5_oqmj1")
+
+[node name="Guns" type="Node" parent="BodyParts"]
+
+[node name="Rifle" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(116, 12)
+rotation = -1.5708
+texture = ExtResource("5_8taew")
+metadata/gun_name = "Rifle"
+
+[node name="Shotgun" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(116, 12)
+rotation = -1.5708
+texture = ExtResource("6_ncyvl")
+metadata/gun_name = "Shotgun"
+
+[node name="Uzi" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(169, 15)
+rotation = 1.5708
+texture = ExtResource("7_qpg8o")
+metadata/gun_name = "Uzi"
+
+[node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(169, 14)
+rotation = -1.5708
+texture = ExtResource("8_27udi")
+metadata/gun_name = "Pistol"
+
+[node name="Head" type="Sprite2D" parent="BodyParts"]
+rotation = -1.5708
+texture = ExtResource("6_p8rlt")

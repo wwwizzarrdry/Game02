@@ -1,11 +1,6 @@
 extends Node
 
 @onready var players = {
-	"0": {
-		viewport = $CanvasLayer2/Control/SubViewportContainer/SubViewport,
-		camera = $CanvasLayer2/Control/SubViewportContainer/SubViewport/Camera2D,
-		player =$CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Level01/Icon
-	},
 	"1": {
 		viewport = $CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport,
 		camera = $CanvasLayer/Control/HBoxContainer/P1_SubViewportContainer/SubViewport/Camera2D,
@@ -20,7 +15,6 @@ extends Node
 
 
 func _ready() -> void:
-	players["0"].viewport.world_2d = players["1"].viewport.world_2d
 	players["2"].viewport.world_2d = players["1"].viewport.world_2d
 	for node in players.values():
 		var remote_transform := RemoteTransform2D.new()
