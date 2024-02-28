@@ -25,6 +25,14 @@ extends CharacterBody2D
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
 
+var outfits = {
+	"Shoulders": [preload("res://Scenes/Components/Player/BodyParts/Shoulders_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Shoulders_Forest_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Shoulders_Green.tres"), preload("res://Scenes/Components/Player/BodyParts/Shoulders_Olive.tres"), preload("res://Scenes/Components/Player/BodyParts/Shoulders_Yellow.tres")],
+	"Backpack": [preload("res://Scenes/Components/Player/BodyParts/Backpack_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Blue_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Brown.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Forest_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Green.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Green_Camo.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Grey.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Grey_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Olive.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Orange_Gradient.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Red.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Salmon.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Tan.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_White.tres"), preload("res://Scenes/Components/Player/BodyParts/Backpack_Yellow.tres")],
+	"Arm_Left": [preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Blue_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Brown.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Forest_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Green.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Green_Camo.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Grey.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Grey_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Olive.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Orange_Gradient.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Red.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Salmon.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Tan.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_White.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Left_Yellow.tres")],
+	"Arm_Right": [preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Blue_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Brown.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Forest_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Green.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Green_Camo.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Grey.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Grey_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Olive.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Orange_Gradient.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Red.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Salmon.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Tan.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_White.tres"), preload("res://Scenes/Components/Player/BodyParts/Arm_Right_Yellow.tres")],
+	"Head": [preload("res://Scenes/Components/Player/BodyParts/Head_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Blue_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Brown.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Forest_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Green_Camo.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Grey.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Grey_Digital.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Light_Blue.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Olive.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Orange_Gradient.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Red.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Tan.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_White.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Yellow.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Beige.tres"), preload("res://Scenes/Components/Player/BodyParts/Head_Dark_Grey.tres")]
+}
+
 var rotate_speed: float = 10.0
 var speed = character_speed # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
@@ -103,6 +111,10 @@ func get_input(_delta):
 	if Input.is_action_just_pressed('change_weapon'):
 		change_weapons()
 
+	# Chane Outfit
+	if Input.is_action_just_pressed('inv_right'):
+		random_outfit()
+
 func set_move_direction(delta: float) -> void:
 
 	var move_speed = speed
@@ -166,3 +178,11 @@ func show_laser(val) -> void:
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
+
+func random_outfit():
+	var r = randi_range(0, outfits.Arm_Right.size()-1)
+	#shoulders.texture = outfits.Shoulders[randi_range(0, outfits.Shoulders.size() - 1)]
+	backpack.texture = outfits.Backpack[r]
+	arm_right.texture = outfits.Arm_Right[r]
+	arm_left.texture = outfits.Arm_Left[r]
+	head.texture = outfits.Head[r]
