@@ -29,7 +29,9 @@ var rotate_speed: float = 10.0
 var speed = character_speed # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
 var friction: float = acceleration / speed
-
+var deadzoneThreshold: float = 0.2
+var deadzoneADSThreshold: float = 0.1
+var is_aiming = false
 
 var all_parts = []
 var all_guns = []
@@ -57,8 +59,28 @@ func _ready() -> void:
 			gun.visible = true
 		i += 1
 
+var targetYOffset: float = 100.0  # Set your desired target Y offset
+var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
 func _process(_delta: float) -> void:
-	pass
+
+	if is_aiming:
+		targetYOffset = 8.0
+		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
+		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset + 8, lerpSpeed)
+		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset + 8, lerpSpeed)
+		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset + 8, lerpSpeed)
+		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset + 8, lerpSpeed)
+		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset + 8, lerpSpeed)
+		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset + 8, lerpSpeed)
+	else:
+		targetYOffset = 0.0
+		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
+		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset, lerpSpeed)
+		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset, lerpSpeed)
+		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset, lerpSpeed)
+		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset, lerpSpeed)
+		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset, lerpSpeed)
+		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset, lerpSpeed)
 
 func _physics_process(delta: float) -> void:
 	get_input(delta)
@@ -82,20 +104,32 @@ func get_input(_delta):
 		change_weapons()
 
 func set_move_direction(delta: float) -> void:
-	friction = acceleration / speed
+
+	var move_speed = speed
+	if is_aiming:
+		move_speed = speed / 2
+
+	friction = acceleration / move_speed
 	apply_traction(delta)
 	apply_friction(delta)
 	move_and_slide()
 
 func set_aim_direction(delta: float) -> void:
 	# Rotation using right analog stick
-	var lookDirection = Vector2(
+	var deadzone := deadzoneThreshold
+	var turn_speed := rotate_speed
+
+	if is_aiming:
+		deadzone = deadzoneADSThreshold
+		turn_speed = rotate_speed / 3
+
+	var lookDirection := Vector2(
 		-Input.get_action_strength("aim_left") + Input.get_action_strength("aim_right"),
 		+Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
 	).normalized()
 
-	if lookDirection.length() > 0.1:
-		rotation = lerp_angle(rotation, lookDirection.angle(), rotate_speed * delta)
+	if lookDirection.length() >= deadzone:
+		rotation = lerp_angle(rotation, lookDirection.angle(), turn_speed * delta)
 
 func apply_traction(delta: float) -> void:
 	var traction: Vector2 = Vector2(
@@ -127,7 +161,8 @@ func change_weapons() -> void:
 	pass
 
 func show_laser(val) -> void:
-	$BodyParts/Laser.visible = val
+	is_aiming = val
+	$BodyParts/Laser.visible = is_aiming
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res

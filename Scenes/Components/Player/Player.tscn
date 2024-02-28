@@ -27,7 +27,6 @@ target_position = Vector2(1000, 0)
 collide_with_areas = true
 
 [node name="Laser" type="Line2D" parent="BodyParts"]
-visible = false
 points = PackedVector2Array(46, 3, 1042, 3)
 width = 2.0
 default_color = Color(1, 0.0235294, 0, 0.745098)
@@ -46,9 +45,10 @@ texture = ExtResource("6_2or20")
 metadata/position_locked = true
 
 [node name="Marker_Head" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-1.90735e-06, 1.90735e-06)
 
 [node name="Marker_Backpack" type="Marker2D" parent="BodyParts/Shoulders"]
-position = Vector2(1.52588e-05, -82)
+position = Vector2(6.10352e-05, -82)
 
 [node name="Marker_Arm_Left" type="Marker2D" parent="BodyParts/Shoulders"]
 position = Vector2(48, 80)
@@ -63,27 +63,26 @@ position = Vector2(-12, 116)
 position = Vector2(-12, 116)
 
 [node name="Marker_Pistol" type="Marker2D" parent="BodyParts/Shoulders"]
-position = Vector2(-15, 169)
+position = Vector2(-15.0001, 169)
 
 [node name="Marker_Uzi" type="Marker2D" parent="BodyParts/Shoulders"]
-position = Vector2(-15, 169)
+position = Vector2(-15.0001, 169)
 
 [node name="Arm_Right" type="Sprite2D" parent="BodyParts"]
-position = Vector2(11, 14)
+position = Vector2(14, 14)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("7_atuji")
 metadata/position_locked = false
 
 [node name="Arm_Left" type="Sprite2D" parent="BodyParts"]
-position = Vector2(16, -10)
+position = Vector2(19, -10)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_hntw5")
 metadata/position_locked = false
 
 [node name="Guns" type="Node2D" parent="BodyParts"]
-position = Vector2(-1, 0)
 
 [node name="Rifle" type="Sprite2D" parent="BodyParts/Guns"]
 visible = false
