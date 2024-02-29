@@ -1,7 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://csarv8vgybcw7"]
+[gd_scene load_steps=13 format=3 uid="uid://csarv8vgybcw7"]
 
 [ext_resource type="Texture2D" uid="uid://d22l2c18p2sfq" path="res://Assets/Images/Sprites/Gamepad.png" id="1_imlv3"]
-[ext_resource type="Script" path="res://Scenes/Levels/StartScreen/StartScreen.gd" id="1_verm4"]
+[ext_resource type="Script" path="res://Scenes/Levels/StartScreen/start_screen.gd" id="1_jsdcm"]
+[ext_resource type="Texture2D" uid="uid://cxpdjb5g0dhtj" path="res://Assets/Images/Tilesets/xbox_buttons.png" id="2_jr0bw"]
+[ext_resource type="Shader" path="res://Shaders/Alpha_Pulse.gdshader" id="3_6x1yb"]
+[ext_resource type="AudioStream" uid="uid://dbfpgcufweula" path="res://Assets/Audio/UI/Modern8.wav" id="4_20x5f"]
+[ext_resource type="AudioStream" uid="uid://cpb1grkltm0hq" path="res://Assets/Audio/UI/Modern9.wav" id="5_362dj"]
+[ext_resource type="AudioStream" uid="uid://dbm3t6uqnttt0" path="res://Assets/Audio/UI/Retro8.wav" id="6_hhmp6"]
+[ext_resource type="AudioStream" uid="uid://buf12mxfqvm0v" path="res://Assets/Audio/UI/Retro10.wav" id="7_wspqi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6lq0x"]
+atlas = ExtResource("2_jr0bw")
+region = Rect2(110, 218, 34, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w6vwn"]
+atlas = ExtResource("2_jr0bw")
+region = Rect2(2, 218, 34, 34)
+filter_clip = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pco0f"]
+shader = ExtResource("3_6x1yb")
+shader_parameter/is_pulsing = true
+shader_parameter/speed = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pbmr6"]
+shader = ExtResource("3_6x1yb")
+shader_parameter/is_pulsing = true
+shader_parameter/speed = 2.0
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -10,7 +35,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_verm4")
+script = ExtResource("1_jsdcm")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -22,135 +47,136 @@ grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 50
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="ReadyConfirm" type="CenterContainer" parent="PanelContainer/MarginContainer"]
+visible = false
 layout_mode = 2
+size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/ReadyConfirm"]
 layout_mode = 2
-size_flags_vertical = 3
-text = "PRESS START ON A GAMEPAD TO ASSIGN A PLAYER"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = 40
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ReadyBtn" type="Button" parent="PanelContainer/MarginContainer/ReadyConfirm/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
+size_flags_vertical = 4
+focus_neighbor_left = NodePath("../BackBtn")
+focus_neighbor_top = NodePath("../BackBtn")
+focus_neighbor_right = NodePath("../BackBtn")
+focus_neighbor_bottom = NodePath("../BackBtn")
+focus_next = NodePath("../BackBtn")
+focus_previous = NodePath("../BackBtn")
+theme_override_constants/h_separation = 13
+theme_override_font_sizes/font_size = 32
+text = "READY!"
+icon = SubResource("AtlasTexture_6lq0x")
 
-[node name="Player1" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="BackBtn" type="Button" parent="PanelContainer/MarginContainer/ReadyConfirm/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+size_flags_vertical = 4
+focus_neighbor_left = NodePath("../ReadyBtn")
+focus_neighbor_top = NodePath("../ReadyBtn")
+focus_neighbor_right = NodePath("../ReadyBtn")
+focus_neighbor_bottom = NodePath("../ReadyBtn")
+focus_next = NodePath("../ReadyBtn")
+focus_previous = NodePath("../ReadyBtn")
+theme_override_constants/h_separation = 13
+theme_override_font_sizes/font_size = 32
+text = "BACK"
+icon = SubResource("AtlasTexture_w6vwn")
+
+[node name="Devices" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Player1" type="VBoxContainer" parent="PanelContainer/MarginContainer/Devices"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1"]
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/Devices/Player1"]
+modulate = Color(0, 0, 0, 0.392157)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
 text = "Player 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1/Label"]
-visible = false
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 0.176471, 0.223529, 1)
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1"]
+[node name="PlayerBtn" type="TextureButton" parent="PanelContainer/MarginContainer/Devices/Player1"]
+modulate = Color(0, 0, 0, 0.392157)
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-texture = ExtResource("1_imlv3")
-expand_mode = 2
+texture_normal = ExtResource("1_imlv3")
+ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Red" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1/TextureRect"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 0, 0, 1)
-
-[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/Devices/Player1"]
+material = SubResource("ShaderMaterial_pco0f")
 layout_mode = 2
 size_flags_vertical = 3
-text = "WAITING..."
+theme_override_font_sizes/font_size = 32
+text = "press start"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
-[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player1/Button"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 0, 0, 1)
-
-[node name="Player2" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Player2" type="VBoxContainer" parent="PanelContainer/MarginContainer/Devices"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2"]
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/Devices/Player2"]
+modulate = Color(0, 0, 0, 0.392157)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
 text = "Player 2"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2/Label"]
-visible = false
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 1, 1)
-
-[node name="TextureRect2" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2"]
+[node name="PlayerBtn" type="TextureButton" parent="PanelContainer/MarginContainer/Devices/Player2"]
+modulate = Color(0, 0, 0, 0.392157)
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-texture = ExtResource("1_imlv3")
-expand_mode = 2
+texture_normal = ExtResource("1_imlv3")
+ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Blue" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2/TextureRect2"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 1, 1)
-
-[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/Devices/Player2"]
+material = SubResource("ShaderMaterial_pbmr6")
 layout_mode = 2
 size_flags_vertical = 3
-text = "WAITING..."
+theme_override_font_sizes/font_size = 32
+text = "press start"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
-[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Player2/Button"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 1, 1)
+[node name="DeviceConnected" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_20x5f")
+max_polyphony = 2
+
+[node name="DeviceDisconnected" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_362dj")
+max_polyphony = 2
+
+[node name="PlayerConnected" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_hhmp6")
+max_polyphony = 2
+
+[node name="ReadyConfirmed" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_wspqi")
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/ReadyConfirm/VBoxContainer/ReadyBtn" to="." method="_on_ready_btn_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/ReadyConfirm/VBoxContainer/BackBtn" to="." method="_on_back_btn_pressed"]

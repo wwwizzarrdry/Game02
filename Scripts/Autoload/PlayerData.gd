@@ -1,5 +1,6 @@
 extends Node
 
+var player_count: int
 var players = [
 	{
 		"gamepad_id": 0,

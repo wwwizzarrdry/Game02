@@ -1,0 +1,130 @@
+[gd_scene load_steps=12 format=3 uid="uid://dppgsdv33qh5"]
+
+[ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
+[ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
+[ext_resource type="Texture2D" uid="uid://q7bto250adn6" path="res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Yellow.tres" id="4_dkyin"]
+[ext_resource type="Texture2D" uid="uid://b0r1mv5v86rko" path="res://Scenes/Components/Weapons/Rifle.tres" id="5_8taew"]
+[ext_resource type="Texture2D" uid="uid://bt5r0txrayufp" path="res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Yellow.tres" id="5_43d7m"]
+[ext_resource type="Texture2D" uid="uid://3ghxccaiyiqd" path="res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres" id="6_2or20"]
+[ext_resource type="Texture2D" uid="uid://8rvxnvgtouj2" path="res://Scenes/Components/Weapons/Shotgun.tres" id="6_ncyvl"]
+[ext_resource type="Texture2D" uid="uid://dgr1nblxv2hex" path="res://Scenes/Components/Weapons/Uzi.tres" id="7_qpg8o"]
+[ext_resource type="Texture2D" uid="uid://wj4aotcc44tr" path="res://Scenes/Components/Weapons/Pistol.tres" id="8_27udi"]
+[ext_resource type="Texture2D" uid="uid://d30xovlp0sbh5" path="res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres" id="10_76ito"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_g7upe")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_mpxel")
+
+[node name="BodyParts" type="Node2D" parent="."]
+
+[node name="RayCast2D" type="RayCast2D" parent="BodyParts"]
+position = Vector2(46, 3)
+target_position = Vector2(1000, 0)
+collide_with_areas = true
+
+[node name="Laser" type="Line2D" parent="BodyParts"]
+visible = false
+points = PackedVector2Array(46, 3, 1042, 3)
+width = 2.0
+default_color = Color(1, 0.0235294, 0, 0.745098)
+
+[node name="Backpack" type="Sprite2D" parent="BodyParts"]
+position = Vector2(-16, 3.58433e-06)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_2u563")
+metadata/position_locked = false
+
+[node name="Shoulders" type="Sprite2D" parent="BodyParts"]
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("6_2or20")
+metadata/position_locked = true
+
+[node name="Marker_Head" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-1.90735e-06, 1.90735e-06)
+
+[node name="Marker_Backpack" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(6.10352e-05, -82)
+
+[node name="Marker_Arm_Left" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(48, 80)
+
+[node name="Marker_Arm_Right" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-65, 59)
+
+[node name="Marker_Rifle" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-12, 116)
+
+[node name="Marker_Shotgun" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-12, 116)
+
+[node name="Marker_Pistol" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-15.0001, 169)
+
+[node name="Marker_Uzi" type="Marker2D" parent="BodyParts/Shoulders"]
+position = Vector2(-15.0001, 169)
+
+[node name="Arm_Right" type="Sprite2D" parent="BodyParts"]
+position = Vector2(14, 14)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("4_dkyin")
+metadata/position_locked = false
+
+[node name="Arm_Left" type="Sprite2D" parent="BodyParts"]
+position = Vector2(19, -10)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("5_43d7m")
+metadata/position_locked = false
+
+[node name="Guns" type="Node2D" parent="BodyParts"]
+
+[node name="Rifle" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(25, 3)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("5_8taew")
+metadata/gun_name = "Rifle"
+metadata/position_locked = false
+
+[node name="Shotgun" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(25, 2)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("6_ncyvl")
+metadata/gun_name = "Shotgun"
+metadata/position_locked = false
+
+[node name="Uzi" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(35, 3)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("7_qpg8o")
+metadata/gun_name = "Uzi"
+metadata/position_locked = false
+
+[node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
+position = Vector2(35, 3)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("8_27udi")
+metadata/gun_name = "Pistol"
+metadata/position_locked = false
+
+[node name="Head" type="Sprite2D" parent="BodyParts"]
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("10_76ito")
+metadata/position_locked = false
+
+[node name="Camera2D" type="Camera2D" parent="." groups=["player"]]
+enabled = false

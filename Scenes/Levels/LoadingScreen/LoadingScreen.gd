@@ -4,7 +4,7 @@ extends Control
 @onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/ProgressBar
 @onready var logger: Label = $PanelContainer/VBoxContainer/Log
 @onready var continue_btn: Button = $PanelContainer/VBoxContainer/ContinueBtn
-@onready var NEXT_SCENE: PackedScene = preload("res://Scenes/Levels/StartScreen/StartScreen.tscn")
+@onready var scene: PackedScene = preload("res://Scenes/Levels/StartScreen/StartScreen.tscn")
 
 var folder = "res://Assets/"
 var total_resources = []
@@ -78,9 +78,9 @@ func _input(_event: InputEvent) -> void:
 		_on_continue_btn_pressed()
 
 func change_scene():
-	get_tree().change_scene_to_packed(NEXT_SCENE)
+	get_tree().change_scene_to_packed(scene)
 
 func _on_continue_btn_pressed() -> void:
 	continue_btn.disabled = true
-	await(get_tree().create_timer(1).timeout)
+	await(get_tree().create_timer(1.0).timeout)
 	call_deferred("change_scene")

@@ -4,6 +4,21 @@ extends Node
 # Access them anywhere with:
 # Global.variable_name
 
+func find_and_remove(array: Array, value) -> void:
+	var index = array.find(value)
+	if index != -1:
+		# Item was found
+		array.remove_at(index)
+
+func replace_or_append(array: Array, value) -> void:
+	var index = array.find(value)
+	if index != -1:
+		# Item was found
+		array[index] = value
+	else:
+		# Item was not found
+		array.append(value)
+
 func timeout(time:float = 1.0):
 	return get_tree().create_timer(time).timeout
 
@@ -31,6 +46,15 @@ func get_viewport_size(scene = null) -> Vector2:
 	var viewport_rect = scene.get_viewport_rect()
 	var viewport_size = viewport_rect.size
 	return viewport_size
+
+func get_nodes_in_branch_group(branch: Node, group: String) -> Array:
+	var group_nodes_on_branch:= []
+	for i in branch.get_children():
+		if i.is_in_group(group):
+			group_nodes_on_branch.append(i)
+		if i.get_child_count() > 0:
+			get_nodes_in_branch_group(i, group)
+	return group_nodes_on_branch
 
 # Global Dialog Box Manager
 var dialogBox = null

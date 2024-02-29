@@ -11,20 +11,20 @@ config_version=5
 [application]
 
 config/name="Game02"
-run/main_scene="res://Scenes/Main.tscn"
+run/main_scene="res://Scenes/Levels/LoadingScreen/LoadingScreen.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 SignalBus="*res://Scripts/Autoload/SignalBus.gd"
+Signals="*res://Scripts/Autoload/Signals.gd"
+PlayerData="*res://Scripts/Autoload/PlayerData.gd"
 Global="*res://Scripts/Autoload/Global.gd"
 GlobalTime="*res://Scripts/Autoload/time.gd"
-PlayerData="*res://Scripts/Autoload/PlayerData.gd"
 
 [display]
 
-window/size/always_on_top=true
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 

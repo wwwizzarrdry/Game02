@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://duqq3amqe8n28"]
+
+[ext_resource type="Script" path="res://Scenes/Components/WorldCamera/world_camera.gd" id="1_uwpbp"]
+
+[node name="WorldCamera" type="Camera2D"]
+position = Vector2(579, 326)
+script = ExtResource("1_uwpbp")
