@@ -4,14 +4,14 @@ extends Control
 @onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/ProgressBar
 @onready var logger: Label = $PanelContainer/VBoxContainer/Log
 @onready var continue_btn: Button = $PanelContainer/VBoxContainer/ContinueBtn
-@onready var scene: PackedScene = preload("res://Scenes/Levels/StartScreen/StartScreen.tscn")
 
+var current_scene
 var folder = "res://Assets/"
 var total_resources = []
 var t = 0
 
 func _ready() -> void:
-
+	current_scene = Global.get_tree().get_current_scene()
 	continue_btn.disabled = true
 	continue_btn.hide()
 	title.show()
@@ -73,14 +73,11 @@ func load_resource(r)->void:
 
 func _input(_event: InputEvent) -> void:
 	if progress_bar.value < progress_bar.max_value: return
-	if Input.is_anything_pressed():
-		continue_btn.grab_focus()
+	if Input.is_action_just_pressed("ui_accept"):
 		_on_continue_btn_pressed()
-
-func change_scene():
-	get_tree().change_scene_to_packed(scene)
 
 func _on_continue_btn_pressed() -> void:
 	continue_btn.disabled = true
-	await(get_tree().create_timer(1.0).timeout)
-	call_deferred("change_scene")
+	#Input.set_action_set_active("ui_accept", false)  # Disable the "ui_accept" action
+	set_process_input(false)  # Disable input processing
+	current_scene.load_level()

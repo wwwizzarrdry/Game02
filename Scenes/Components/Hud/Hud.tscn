@@ -17,7 +17,7 @@ shader_parameter/is_pulsing = false
 shader_parameter/speed = 2.0
 
 [node name="HUD" type="Control"]
-process_mode = 1
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,8 +43,8 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -55.0
-offset_right = 56.0
-offset_bottom = 26.0
+offset_right = 61.0
+offset_bottom = 38.0
 grow_horizontal = 2
 
 [node name="BoxContainer" type="BoxContainer" parent="Gamepads"]
@@ -52,13 +52,14 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -39.5
-offset_top = 2.0
-offset_right = 49.5
-offset_bottom = 23.0
+offset_left = -42.5
+offset_top = 7.0
+offset_right = 46.5
+offset_bottom = 33.0
 grow_horizontal = 2
 
 [node name="Gamepad_Icon" type="TextureRect" parent="Gamepads/BoxContainer"]
+custom_minimum_size = Vector2(34, 26)
 layout_mode = 2
 size_flags_horizontal = 0
 texture = ExtResource("1_8b0di")
@@ -91,7 +92,6 @@ color = Color(0.227451, 0.227451, 0.227451, 1)
 
 [node name="PausedLabel" type="Label" parent="Gamepads"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

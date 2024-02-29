@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scenes/Levels/Level01/Level01.gd" id="2_5l422"]
 [ext_resource type="TileSet" uid="uid://diua6r7w7rt0j" path="res://Scenes/Levels/WorldTileset.tres" id="2_slnuq"]
 
-[node name="Level" type="Node"]
+[node name="Level" type="CanvasLayer"]
 script = ExtResource("2_5l422")
 
 [node name="TileMap" type="TileMap" parent="."]

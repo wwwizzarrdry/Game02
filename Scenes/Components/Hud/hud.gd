@@ -6,15 +6,12 @@ var connected_gamepads = []
 func _ready() -> void:
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	connected_gamepads = Input.get_connected_joypads()
-
-	print("HUD loaded. Player Count == " + str(PlayerData.player_count))
-
 	for i in range(connected_gamepads.size()):
 		icons[i].color = Color(0.329, 0.639, 0.337)
 
 func _input(_event):
 	if Input.is_action_just_pressed("pause"):
-		toggle_pause()
+		pause_game(!get_tree().paused)
 
 func pause_game(value):
 	connected_gamepads = Input.get_connected_joypads()
@@ -30,6 +27,7 @@ func pause_game(value):
 func toggle_pause():
 	var is_paused = get_tree().paused
 	connected_gamepads = Input.get_connected_joypads()
+
 	if is_paused:
 		$BG.color = Color(0, 0, 0, 0.0)
 		%PausedLabel.visible = false

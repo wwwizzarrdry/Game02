@@ -20,10 +20,13 @@ extends Control
 @onready var player_connected: AudioStreamPlayer2D = $PlayerConnected
 @onready var ready_confirmed: AudioStreamPlayer2D = $ReadyConfirmed
 
+var current_scene
 var gamepads = []
 var players_ready = []
 
 func _ready() -> void:
+	current_scene = Global.get_tree().get_current_scene()
+
 	#Input.connect("joy_connection_changed", _on_joy_connection_changed)
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	gamepads = Input.get_connected_joypads()
@@ -203,11 +206,11 @@ func show_devices_panel():
 		toggle_pulsing(player2_label, true)
 
 func start_game():
+	set_process_input(false)  # Disable input processing
 	PlayerData.player_count = players_ready.size()
 	print("player count: " + str(PlayerData.player_count))
 	ready_confirmed.play()
-	await get_tree().create_timer(1.0).timeout
-	get_tree().change_scene_to_file("res://Scenes/Main.tscn")
+	current_scene.load_level()
 
 func toggle_pulsing(node, is_pulsing: bool) -> void:
 	node.get_material().set_shader_parameter("is_pulsing", is_pulsing)

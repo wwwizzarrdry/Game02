@@ -1,16 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://sje25mt2k15s"]
+[gd_scene load_steps=2 format=3 uid="uid://sje25mt2k15s"]
 
 [ext_resource type="Script" path="res://Scenes/main.gd" id="1_2qqrh"]
-[ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="1_da2g7"]
-[ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="2_127x7"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_2qqrh")
-
-[node name="HUD" parent="." instance=ExtResource("1_da2g7")]
-unique_name_in_owner = true
-process_mode = 3
-show_behind_parent = true
-top_level = true
-
-[node name="WorldCamera" parent="." instance=ExtResource("2_127x7")]
