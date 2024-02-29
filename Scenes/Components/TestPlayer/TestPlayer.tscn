@@ -125,6 +125,3 @@ rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("10_76ito")
 metadata/position_locked = false
-
-[node name="Camera2D" type="Camera2D" parent="." groups=["player"]]
-enabled = false

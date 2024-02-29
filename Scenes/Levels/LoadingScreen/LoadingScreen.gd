@@ -27,7 +27,7 @@ func _ready() -> void:
 		progress_bar.value = 0
 
 		for r in total_resources:
-			t = randf_range(0.01, 0.03)
+			t = randf_range(0.001, 0.01)
 			await(get_tree().create_timer(t).timeout)
 			load_resource(r)
 	else:

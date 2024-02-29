@@ -6,6 +6,9 @@ var connected_gamepads = []
 func _ready() -> void:
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	connected_gamepads = Input.get_connected_joypads()
+
+	set_process_input(false)  # Disable input processing
+
 	for i in range(connected_gamepads.size()):
 		icons[i].color = Color(0.329, 0.639, 0.337)
 
