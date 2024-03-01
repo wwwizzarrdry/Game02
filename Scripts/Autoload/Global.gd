@@ -3,6 +3,22 @@ extends Node
 #
 # Access them anywhere with:
 # Global.variable_name
+
+
+func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: int, mass: float):
+	center_point = center_point if center_point else Vector2.ZERO
+	max_dist = max_dist if max_dist else 500
+	mass = mass if mass else 1.0
+
+	var IDEAL_ROPE_DISTANCE = max_dist * 0.8 # adjust as needed
+	var ROPE_SPRING_CONSTANT = 200 # adjust as needed
+
+	var rope_vector = object.position - center_point
+	var rope_distance = rope_vector.length()
+	if rope_distance > IDEAL_ROPE_DISTANCE:
+		var rope_force = ROPE_SPRING_CONSTANT * (rope_distance - IDEAL_ROPE_DISTANCE)
+		object.velocity += rope_vector.normalized() * -rope_force * delta / mass
+
 func print_dict(d, indent:int=0):
 	var spaces = "\t"
 	for i in indent: spaces = spaces + str("\t")

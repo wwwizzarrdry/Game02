@@ -68,7 +68,9 @@ func _ready() -> void:
 
 var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+
+	Global.apply_tether_force(delta, self, Vector2.ZERO, 500, 3.0)
 
 	if is_aiming:
 		targetYOffset = 8.0

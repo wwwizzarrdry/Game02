@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b65qoxprtpjvw"
-path="res://.godot/imported/gamepad_2.png-c8431918d4e6e1e6c547260f7b6b2d90.ctex"
+uid="uid://ddxsddpvblfc4"
+path="res://.godot/imported/exclamation_mark.png-041367dd3be233648033f33e515f84a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/Sprites/gamepad_2.png"
-dest_files=["res://.godot/imported/gamepad_2.png-c8431918d4e6e1e6c547260f7b6b2d90.ctex"]
+source_file="res://Assets/Images/Sprites/Testing/exclamation_mark.png"
+dest_files=["res://.godot/imported/exclamation_mark.png-041367dd3be233648033f33e515f84a3.ctex"]
 
 [params]
 
