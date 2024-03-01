@@ -96,13 +96,7 @@ func load_game(index):
 		get_camera_targets()
 		#set_camera_limits()
 
-		progress_bar = $ProgressBar  # Reference to the ProgressBar node
-		thread = Thread.new()  # A new thread for map generation
-		# Start the map generation in a new thread
-		#thread.start(generate_arena.bind("noise"), 2)
-		#thread.wait_to_finish()
-
-		generate_arena("noise")
+		generate_arena("circle")
 
 func spawn_players():
 	var player1 = player.instantiate()
@@ -117,17 +111,47 @@ func spawn_players():
 
 
 func generate_arena(type: String = "circle"):
+
 	var style = type  # Style of tile placement: "circle", "spiral", "angle", or "noise"
 	var tilemap = $TileMap  # Reference to the TileMap node
-	var center =  Vector2(10, 10) #tilemap.local_to_map(world_camera.position) #Vector2(10, 10)  # Center of the circle
-	var radii = [300, 600, 900, 1200, 1500]  # List of radii
-	var tile_ids = [3, 8, 9, 10, 11]  # Corresponding tile IDs for water, land, mountain, and noise-based tiles
+	var center =  Vector2(36, 20) #tilemap.local_to_map(world_camera.position) #Vector2(10, 10)  # Center of the circle
+	var radii = [300, 1000, 2000]  # List of radii
+	var tile_ids = [0, 3, 0, 10, 9]  # Corresponding tile IDs for water, land, mountain, and noise-based tiles
+	var atlas_ids = [Vector2(2, 5), Vector2(0, 0), Vector2(2, 1), 10,  9]
 	var angle_segment = PI / 4  # Angle segment for the "angle" style
 	var perimeter_tiles = []
+
+	var colors = [Color(1, 0, 0, 0.15), Color(0, 1, 0, 0.15), Color(0, 0, 1, 0.15)]
 
 	tilemap.clear()
 
 	if style == "circle":
+		for i in range(radii.size()):
+			var radius = radii[i]
+			var area = Area2D.new()
+			var collision_shape = CollisionShape2D.new()
+			var circle_shape = CircleShape2D.new()
+
+			area.name = "AreaFloorRnig_" + str(i)
+			area.add_to_group("area_floor_ring")
+			area.set_meta("ring_id", i)
+			area.set_meta("ring_rank", (radii.size()-i))
+			area.set_meta("acceleration", (radii.size()-i)*2000)
+			area.set_meta("bonus_modifier", (radii.size()-i)/10) # ex. If raddii[] is size 3, Ring 1 = (3-0/10) => 0.3 => 30%
+			area.set_meta("radius", radius)
+
+			circle_shape.radius = radius
+			collision_shape.shape = circle_shape
+			collision_shape.debug_color = colors[i]
+
+			area.add_child(collision_shape)
+			area.position = center
+			self.add_child(area)
+
+			area.body_entered.connect(_on_body_entered.bind(area))
+			area.body_exited.connect(_on_body_exited.bind(area))
+
+
 		for x in range(center.x - radii[-1], center.x + radii[-1]):
 			for y in range(center.y - radii[-1], center.y + radii[-1]):
 				var pos_world = Vector2(x, y)
@@ -135,10 +159,29 @@ func generate_arena(type: String = "circle"):
 				var dist = pos_world.distance_to(center)
 				for i in range(len(radii)):
 					if dist <= radii[i] and tilemap.get_cell_source_id(0, pos_map) == -1:  # Check if there isn't already a tile at the position
-						tilemap.set_cell(0, pos_map, tile_ids[i], Vector2(0, 0), 0)  # Place a tile at the position
+						tilemap.set_cell(0, pos_map, tile_ids[i], atlas_ids[i], 0)  # Place a tile at the position
+					if dist >= radii[i] - 1 and dist <= radii[i] + 1:
+						# Add the border tiles
+						for dx in range(-1, 2):
+							for dy in range(-1, 2):
+								if dx == 0 and dy == 0:
+									continue  # Skip the current tile
+								var neighbor_pos = pos_map + Vector2i(dx, dy)
+								var neighbor_tile_id = tilemap.get_cell_source_id(0, neighbor_pos, false)
+								if neighbor_tile_id == -1 and neighbor_tile_id != tile_ids[i]:
+									tilemap.set_cell(0, pos_map, 8, Vector2(0, 0), 0)
+									break
+
+
 						if dist == radii[i]:
 							perimeter_tiles.append(pos_map)  # Save the perimeter tiles
 							break
+
+					# Save the perimeter tiles
+					if dist >= radii[-1] - 8 and dist <= radii[-1] + 8:
+						tilemap.set_cell(0, pos_map, 6, Vector2(0, 3), 0)  # Place a border tile
+
+
 	elif style == "spiral":
 		var angle = 0.0
 		var radius = 0.0
@@ -173,13 +216,10 @@ func generate_arena(type: String = "circle"):
 							break
 	elif style == "noise":
 		var noise_texture = load("res://Assets/Images/Textures/PNG/Techno 2 - 128x128.png")  # Noise texture
-		var size = Vector2(720, 720)  # Size of the square in tile coordinates
+		var size = Vector2(70, 720)  # Size of the area in tile coordinates
 		var noise_scale = Vector2(0.1, 0.1)  # Scale factor for the noise texture
 		center = Vector2(size.x/2, size.y/2)
 		tile_ids = [9, 3, 11]  # Corresponding tile IDs
-
-		var total_tiles = size.x * size.y
-		var processed_tiles = 0
 
 		for x in range(size.x):
 			for y in range(size.y):
@@ -199,15 +239,38 @@ func generate_arena(type: String = "circle"):
 					tile_id = tile_ids[4]  # Mountain
 				tilemap.set_cell(0, pos_tile, tile_id, Vector2(0, 0), 0)  # Place a tile at the position
 
-				processed_tiles += 1
-				# Update the progress bar in the main thread
-				#call_deferred("_update_progress", processed_tiles / total_tiles)
-
 				if x == 0 or y == 0 or x == size.x - 1 or y == size.y - 1:  # Check if the tile is on the edge of the square
 					perimeter_tiles.append(pos_tile)  # Save the perimeter tiles
+
+
 	print("Center tile: ", center)
 	print("Perimeter tiles: ", perimeter_tiles)
 
+func _on_body_entered(body, area):
+	print("Body entered: ", body.name)
+	if body.has_method("ring_entered"):
+		body.ring_entered({
+			"node": area,
+			"ring_id": area.get_meta("ring_id"),
+			"name": area.name,
+			"group": area.get_groups()[0],
+			"ring_rank": area.get_meta("ring_rank"),
+			"radius": area.get_meta("radius"),
+			"acceleration": area.get_meta("acceleration"),
+			"bonus_modifier": area.get_meta("bonus_modifier")
+		})
 
-func _update_progress(value):
-	progress_bar.value = value  # Update the progress bar
+func _on_body_exited(body, area):
+	print("Body exited: ", body, area)
+	if body.has_method("ring_exited"):
+		body.ring_exited({
+			"node": area,
+			"ring_id": area.get_meta("ring_id"),
+			"name": area.name,
+			"group": area.get_groups()[0],
+			"ring_rank": area.get_meta("ring_rank"),
+			"radius": area.get_meta("radius"),
+			"acceleration": area.get_meta("acceleration"),
+			"ring_num": area.get_meta("rank"),
+			"bonus_modifier": area.get_meta("bonus_modifier")
+		})

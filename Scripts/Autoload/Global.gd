@@ -3,6 +3,45 @@ extends Node
 #
 # Access them anywhere with:
 # Global.variable_name
+func print_dict(d, indent:int=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+
+	for key in d:
+		if typeof(d[key]) == TYPE_DICTIONARY:
+			print(spaces + str(key) + ":")
+			print_dict(d[key], indent + 1)
+		else:
+			print(spaces + str(key) + ": " + str(d[key]))
+
+func print_array(arr, indent=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+	for i in range(arr.size()):
+		var value = arr[i]
+		if value is Array:
+			print(spaces + "Array:")
+			print_array(value, indent + 1)
+		elif value is Dictionary:
+			print(spaces + "Dictionary:")
+			print_dict(value, indent + 1)
+		else:
+			print(spaces + str(i) + ": " + str(value))
+
+func print_object(obj, indent=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+	for property in obj.get_property_list():
+		var name = property.name
+		var value = obj.get(name)
+		print(spaces + str(name) + ": " + str(value))
+
+func printobj(obj):
+	if !obj: return
+	if obj is Array: print_array(obj)
+	elif obj is Dictionary: print_dict(obj)
+	elif obj is Object: print_object(obj)
+	else: print(obj)
 
 func find_and_remove(array: Array, value) -> void:
 	var index = array.find(value)

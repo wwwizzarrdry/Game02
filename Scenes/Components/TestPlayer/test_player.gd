@@ -185,3 +185,7 @@ func random_outfit():
 	arm_right.texture = outfits.Arm_Right[r]
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
+
+func ring_entered(obj):
+	Global.printobj(obj)
+	acceleration = obj.acceleration
