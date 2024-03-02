@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
-@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 200
+@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 500
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
 @export_enum("Pistol", "Uzi", "Rifle", "Shotgun") var character_gun: String = "Pistol"
 @export var player_skin: Dictionary = {
@@ -23,6 +23,8 @@ extends CharacterBody2D
 @onready var uzi: Sprite2D = $BodyParts/Guns/Uzi
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
+@onready var laser: RayCast2D = $Laser
+
 
 var outfits = {
 	"Shoulders": [preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres")],
@@ -32,8 +34,9 @@ var outfits = {
 	"Head": [preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Light_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Beige.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Dark_Grey.tres")]
 }
 
+var max_distance = 1280
 var rotate_speed: float = 10.0
-var speed = character_speed # increasing speed, also decreases traction
+var speed: float = character_speed * 1.0  # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
 var friction: float = acceleration / speed
 var deadzoneThreshold: float = 0.2
@@ -66,21 +69,23 @@ func _ready() -> void:
 			gun.visible = true
 		i += 1
 
+# Subtle lean forward while aiming
 var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
 func _process(delta: float) -> void:
 
-	Global.apply_tether_force(delta, self, Vector2.ZERO, 500, 3.0)
+	Global.apply_tether_force(delta, self, Vector2.ZERO, max_distance, 3.0)
 
 	if is_aiming:
+
 		targetYOffset = 8.0
-		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
-		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset + 8, lerpSpeed)
-		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset + 8, lerpSpeed)
-		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset + 8, lerpSpeed)
-		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset + 8, lerpSpeed)
-		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset + 8, lerpSpeed)
-		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset + 8, lerpSpeed)
+		head.offset.y      = lerp(head.offset.y, targetYOffset + 8, lerpSpeed)
+		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset, lerpSpeed)
+		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset, lerpSpeed)
+		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset, lerpSpeed)
+		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset, lerpSpeed)
+		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset, lerpSpeed)
+		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset, lerpSpeed)
 	else:
 		targetYOffset = 0.0
 		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
@@ -120,7 +125,7 @@ func set_move_direction(delta: float) -> void:
 
 	var move_speed = speed
 	if is_aiming:
-		move_speed = speed / 2
+		move_speed = speed / 2.0
 
 	friction = acceleration / move_speed
 	apply_traction(delta)
@@ -155,10 +160,10 @@ func apply_friction(delta: float) -> void:
 	velocity -= velocity * friction * delta
 
 func toggle_sprint() -> void:
-	if speed >= 500:
-		set_move_speed(200)
-	else:
+	if speed >= 800:
 		set_move_speed(500)
+	else:
+		set_move_speed(800)
 
 func set_move_speed(s) -> void:
 	speed = s
@@ -170,12 +175,16 @@ func change_weapons() -> void:
 		all_guns[i].visible = false
 		if i == next_gun:
 			all_guns[i].visible = true
+			laser.global_position = all_guns[i].get_child(0).global_position
 	current_gun = next_gun
+
 	pass
 
 func show_laser(val) -> void:
 	is_aiming = val
-	$BodyParts/Laser.visible = is_aiming
+	laser.global_position = all_guns[current_gun].get_child(0).global_position
+	laser.enabled = is_aiming
+	laser.visible = is_aiming
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res

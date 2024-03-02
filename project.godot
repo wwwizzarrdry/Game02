@@ -25,8 +25,9 @@ GlobalTime="*res://Scripts/Autoload/time.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=2
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
@@ -37,6 +38,10 @@ naming/scene_name_casing=1
 [filesystem]
 
 import/blender/enabled=false
+
+[gui]
+
+theme/custom_font="res://Assets/Fonts/roboto.tres"
 
 [input]
 

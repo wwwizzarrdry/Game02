@@ -92,6 +92,7 @@ color = Color(0.227451, 0.227451, 0.227451, 1)
 
 [node name="PausedLabel" type="Label" parent="Gamepads"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

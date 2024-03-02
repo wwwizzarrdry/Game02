@@ -4,20 +4,42 @@ extends Node
 # Access them anywhere with:
 # Global.variable_name
 
+var default_font: FontVariation = preload("res://Assets/Fonts/roboto.tres")
+
+func get_root():
+	var r = get_tree().get_root()
+	return r
+
+func get_root_viewport():
+	var r = get_root()
+	var vp = r.get_viewport()
+	return vp
+
+func get_root_viewport_size():
+	var r = get_root()
+	var vp = r.get_root_viewport()
+	var vs = vp.get_viewport_rect().size
+	return vs
 
 func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: int, mass: float):
 	center_point = center_point if center_point else Vector2.ZERO
 	max_dist = max_dist if max_dist else 500
-	mass = mass if mass else 1.0
+	mass = mass if mass else 3.0
 
-	var IDEAL_ROPE_DISTANCE = max_dist * 0.8 # adjust as needed
-	var ROPE_SPRING_CONSTANT = 200 # adjust as needed
+	var IDEAL_ROPE_DISTANCE = max_dist * 0.9 # adjust as needed
+	var ROPE_SPRING_CONSTANT = 100 # adjust as needed
 
 	var rope_vector = object.position - center_point
 	var rope_distance = rope_vector.length()
 	if rope_distance > IDEAL_ROPE_DISTANCE:
 		var rope_force = ROPE_SPRING_CONSTANT * (rope_distance - IDEAL_ROPE_DISTANCE)
 		object.velocity += rope_vector.normalized() * -rope_force * delta / mass
+
+	if object.is_in_group("player"):
+		var distance = object.position.distance_to(center_point)
+		var ratio_of_max_distance = distance/max_dist
+		get_tree().current_scene.draw_max_distance_perimeter(center_point, max_dist, ratio_of_max_distance)
+
 
 func print_dict(d, indent:int=0):
 	var spaces = "\t"
@@ -48,9 +70,9 @@ func print_object(obj, indent=0):
 	var spaces = "\t"
 	for i in indent: spaces = spaces + str("\t")
 	for property in obj.get_property_list():
-		var name = property.name
-		var value = obj.get(name)
-		print(spaces + str(name) + ": " + str(value))
+		var _name = property.name
+		var value = obj.get(_name)
+		print(spaces + str(_name) + ": " + str(value))
 
 func printobj(obj):
 	if !obj: return
