@@ -23,3 +23,8 @@ margin = Vector2(2000, 2000)
 
 [node name="HUD" parent="CanvasLayer" instance=ExtResource("2_fixex")]
 visible = true
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

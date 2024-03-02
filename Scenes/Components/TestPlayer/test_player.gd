@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+@export var max_distance:float = 5000.0 : set = set_max_distance
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
 @export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 500
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
@@ -34,7 +35,6 @@ var outfits = {
 	"Head": [preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Light_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Beige.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Dark_Grey.tres")]
 }
 
-var max_distance = 1280
 var rotate_speed: float = 10.0
 var speed: float = character_speed * 1.0  # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
@@ -200,3 +200,6 @@ func random_outfit():
 func ring_entered(obj):
 	Global.printobj(obj)
 	acceleration = obj.acceleration
+
+func set_max_distance(distance) -> void:
+	max_distance = distance
