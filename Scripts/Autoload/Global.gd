@@ -22,11 +22,8 @@ func get_root_viewport_size():
 	return vs
 
 func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: int, mass: float):
-	center_point = center_point if center_point else Vector2.ZERO
-	max_dist = max_dist if max_dist else 500
-	mass = mass if mass else 3.0
 
-	var IDEAL_ROPE_DISTANCE = max_dist * 0.9 # adjust as needed
+	var IDEAL_ROPE_DISTANCE = max_dist - 100 # adjust as needed
 	var ROPE_SPRING_CONSTANT = 100 # adjust as needed
 
 	var rope_vector = object.position - center_point

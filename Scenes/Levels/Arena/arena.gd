@@ -57,7 +57,6 @@ func generate_arena(_type: String = "circle") -> void:
 				var dist = pos_world.distance_to(center)
 
 				for i in range(len(radii)):
-
 					# Place floor tile for this radius
 					if dist <= radii[i] and tilemap.get_cell_source_id(0, pos_map) == -1:  # Check if there isn't already a tile at the position
 						tilemap.set_cell(0, pos_map, tile_ids[i], atlas_ids[i], 0)  # Place a tile at the position

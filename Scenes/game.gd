@@ -46,7 +46,7 @@ func _process(_delta: float) -> void:
 func _draw():
 
 	# Draw Tether
-	draw_dashed_line(center_point, $Player.position, Color(0, 0, 1), 5.0, 10.0, true)
+	draw_dashed_line(center_point, $Player.position, Color(0, 0, 1), 5.0, 20.0, true)
 
 	if show_max_dist_perimeter:
 		# Draw max distace perimeter
@@ -150,6 +150,6 @@ func draw_cam_rect(r):
 
 func _on_timer_timeout() -> void:
 	#if $Player.max_distance >= 500:
-	$Player.max_distance -= 100
+	$Player.max_distance -= 10
 	print($Player.max_distance)
 	$Timer.start()

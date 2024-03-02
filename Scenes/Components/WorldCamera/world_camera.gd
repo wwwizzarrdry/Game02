@@ -14,6 +14,27 @@ func _ready() -> void:
 	get_camera_targets()
 	#set_camera_limits()
 
+func _input(_event):
+
+	if Input.is_action_just_released("zoom_in"):
+		# Mouse Wheel
+		zoom.x += 0.1
+		zoom.y += 0.1
+
+	if Input.is_action_just_released("zoom_out"):
+		# Mouse Wheel
+		zoom.x -= 0.1
+		zoom.y -= 0.1
+
+	if Input.is_action_just_released("ui_left"):
+		position.x -= 2
+	if Input.is_action_just_released("ui_right"):
+		position.x += 2
+	if Input.is_action_just_released("ui_up"):
+		position.y -= 2
+	if Input.is_action_just_released("ui_down"):
+		position.y += 2
+
 func _process(delta):
 	if !targets:
 		return

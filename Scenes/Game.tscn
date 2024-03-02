@@ -1,30 +1,33 @@
-[gd_scene load_steps=5 format=3 uid="uid://be6gp0ug2w2wk"]
+[gd_scene load_steps=6 format=3 uid="uid://be6gp0ug2w2wk"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_od7q6"]
 [ext_resource type="PackedScene" uid="uid://dppgsdv33qh5" path="res://Scenes/Components/TestPlayer/TestPlayer.tscn" id="2_78d53"]
 [ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="2_btvqd"]
 [ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="2_fixex"]
+[ext_resource type="PackedScene" uid="uid://ds2cinxxbq0xe" path="res://Scenes/Levels/World/World.tscn" id="2_gnwiy"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_od7q6")
 
-[node name="Player" parent="." instance=ExtResource("2_78d53")]
-position = Vector2(653, 366)
-character_gun = "Rifle"
+[node name="GUI" type="CanvasLayer" parent="."]
 
-[node name="WorldCamera" parent="." instance=ExtResource("2_btvqd")]
-position = Vector2(635, 366)
-position_smoothing_enabled = true
-min_zoom = 10.0
-max_zoom = 0.1
-margin = Vector2(2000, 2000)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="HUD" parent="CanvasLayer" instance=ExtResource("2_fixex")]
+[node name="HUD" parent="GUI" instance=ExtResource("2_fixex")]
 visible = true
+
+[node name="World" parent="." instance=ExtResource("2_gnwiy")]
+
+[node name="Player" parent="." instance=ExtResource("2_78d53")]
+position = Vector2(8, -12)
+character_gun = "Rifle"
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true
+
+[node name="WorldCamera" parent="." instance=ExtResource("2_btvqd")]
+position = Vector2(9, -9)
+position_smoothing_enabled = true
+min_zoom = 10.0
+max_zoom = 0.1
+margin = Vector2(850, 720)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
