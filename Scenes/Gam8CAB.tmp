@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://be6gp0ug2w2wk"]
+[gd_scene load_steps=6 format=3 uid="uid://be6gp0ug2w2wk"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_od7q6"]
 [ext_resource type="PackedScene" uid="uid://dppgsdv33qh5" path="res://Scenes/Components/TestPlayer/TestPlayer.tscn" id="2_78d53"]
 [ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="2_btvqd"]
 [ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="2_fixex"]
 [ext_resource type="PackedScene" uid="uid://ds2cinxxbq0xe" path="res://Scenes/Levels/World/World.tscn" id="2_gnwiy"]
-[ext_resource type="AudioStream" uid="uid://bknboaj2rcyw7" path="res://Assets/Audio/Music/Ludum Dare 30 - 02.ogg" id="6_lx6an"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_od7q6")
@@ -30,13 +29,5 @@ position_smoothing_enabled = true
 min_zoom = 10.0
 max_zoom = 0.1
 margin = Vector2(850, 720)
-
-[node name="DefaultListener" type="AudioListener2D" parent="."]
-current = true
-
-[node name="DefaultPlayer" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("6_lx6an")
-volume_db = -10.0
-autoplay = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

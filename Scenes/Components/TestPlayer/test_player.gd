@@ -1,6 +1,23 @@
 extends CharacterBody2D
 
-@export var max_distance:float = 5000.0 : set = set_max_distance
+@export var max_distance:float = 5000.0 : set = set_max_distance, get = get_max_distance
+func set_max_distance(val: float) -> void:
+	max_distance = val
+func get_max_distance() -> float:
+	return max_distance
+
+@export var health:float = 100.0 : set = set_health, get = get_health
+func set_health(val: float) -> void:
+	health = val
+func get_health() -> float:
+	return health
+
+@export var shield:float = 100.0 : set = set_shield, get = get_shield
+func set_shield(val: float) -> void:
+	shield = val
+func get_shield() -> float:
+	return shield
+
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
 @export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 500
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
@@ -43,11 +60,18 @@ var deadzoneThreshold: float = 0.2
 var deadzoneADSThreshold: float = 0.1
 var is_aiming = false
 
+var max_health: float = 100.0
+var max_shield: float = 100.0
+
 var all_parts = []
 var all_guns = []
 var current_gun = 0
 
 func _ready() -> void:
+	Signals.player_entered_pit.connect(_on_player_entered_pit)
+	Signals.player_exited_pit.connect(_on_player_exited_pit)
+	Signals.player_entered_pit_danger_area.connect(_on_danger_area_entered)
+	Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
 
 	backpack.texture = player_skin["backpack"]
 	shoulders.texture = player_skin["shoulders"]
@@ -197,9 +221,71 @@ func random_outfit():
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
 
-func ring_entered(obj):
-	Global.printobj(obj)
-	acceleration = obj.acceleration
 
-func set_max_distance(distance) -> void:
-	max_distance = distance
+func play_audio(val: String) -> void:
+	match val:
+		"player_shield_damaged":
+			Audio.queue({"listener": $PLayerAudioListener, "device": $PlayerShieldDamaged})
+		"player_shield_broken":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldBroken})
+		"player_health_damaged":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerHealthDamaged})
+		"player_death":
+			Audio.queue({"listener": $PLayerAudioListener, "device": $PlayerDeath})
+		_:
+			return
+
+func take_damage(data):
+	print(name + " took " + data.damage_type + " damage for " + str(data.damage) + "HP!")
+	var damage = data.damage
+	var current_shield = get_shield()
+	var current_health = get_health()
+	var remaining_damage = clamp(damage - current_shield, 0.0, damage)
+
+	if current_shield > 0:
+		play_audio("player_shield_damaged")
+		set_shield(clamp(current_shield - damage, 0.0, max_shield))
+		current_shield = get_shield()
+
+		if current_shield == 0:
+			play_audio("player_shield_broken")
+
+	if current_health > 0:
+		play_audio("player_health_damaged")
+		set_health(clamp(current_health - remaining_damage, 0.0, max_health))
+		current_health = get_health()
+
+		if current_health == 0:
+			play_audio("player_death")
+			Signals.player_died.emit(self)
+			on_player_died(self)
+
+	print("Shield: ", current_shield)
+	print("Health: ", current_health)
+
+func _on_danger_area_entered(body) -> void:
+	if body == self:
+		print("Player is in danger!")
+		# Update player to in-danger state
+		modulate = Color(1, 0, 0)
+
+func _on_danger_area_exited(body) -> void:
+	if body == self:
+		print("Player is out of danger!")
+		# Update player to out-of-danger state
+		modulate = Color(1, 1, 1)
+		set_health(100)
+		set_shield(100)
+
+func _on_player_entered_pit(body) -> void:
+	print(body.name + " in the pit!!!")
+
+func _on_player_exited_pit(body) -> void:
+	print(body.name + " escaped the pit!")
+	show()
+
+func on_player_died(body):
+	print(body.name + " died")
+	# World camera needs to update its targets before freeing player
+	#queue_free()
+	hide()

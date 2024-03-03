@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dppgsdv33qh5"]
+[gd_scene load_steps=16 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
 [ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
@@ -10,6 +10,10 @@
 [ext_resource type="Texture2D" uid="uid://dgr1nblxv2hex" path="res://Scenes/Components/Weapons/Uzi.tres" id="7_qpg8o"]
 [ext_resource type="Texture2D" uid="uid://wj4aotcc44tr" path="res://Scenes/Components/Weapons/Pistol.tres" id="8_27udi"]
 [ext_resource type="Texture2D" uid="uid://d30xovlp0sbh5" path="res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres" id="10_76ito"]
+[ext_resource type="AudioStream" uid="uid://tnanimibi3qm" path="res://Assets/Audio/SFX/shield_damage.wav" id="11_8cd54"]
+[ext_resource type="AudioStream" uid="uid://bb7qj3rrlpixy" path="res://Assets/Audio/SFX/shield_broken.wav" id="12_ipw16"]
+[ext_resource type="AudioStream" uid="uid://df5xq1mlb3qyh" path="res://Assets/Audio/SFX/health_damage.wav" id="13_6043p"]
+[ext_resource type="AudioStream" uid="uid://ctdb8bgv1kyiw" path="res://Assets/Audio/SFX/power-down.wav" id="14_2je56"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
 
@@ -134,3 +138,19 @@ position = Vector2(10, 0)
 rotation = -1.5708
 texture = ExtResource("10_76ito")
 metadata/position_locked = false
+
+[node name="PlayerShieldDamaged" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("11_8cd54")
+max_polyphony = 3
+
+[node name="PlayerShieldBroken" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("12_ipw16")
+
+[node name="PlayerHealthDamaged" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("13_6043p")
+max_polyphony = 3
+
+[node name="PlayerDeath" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("14_2je56")
+
+[node name="PlayerAudioListener" type="AudioListener2D" parent="."]

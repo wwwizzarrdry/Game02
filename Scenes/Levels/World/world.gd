@@ -1,14 +1,21 @@
 extends Node2D
 
 @onready var tilemap = $TileMap
+@onready var pit_danger_area: Area2D = $PitTrap/Danger
+@onready var pit_area: Area2D = $PitTrap/Pit
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+
+	#Signals.player_entered_pit.connect(_on_body_entered_pit)
+	#Signals.player_exited_pit.connect(_on_body_exited_pit)
+	#Signals.player_entered_pit_danger_area.connect(_on_danger_area_entered)
+	#Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
+
 	self.z_index = -1
 	generate_tiles()
+
 	pass # Replace with function body.
-
-
 
 func generate_tiles() -> void:
 	# Define your arrays of radii and tile IDs here
@@ -39,12 +46,59 @@ func generate_tiles() -> void:
 			for i in range(len(radii)):
 				# Place border tile for the edge of this radius
 				if distance_to_center > radii[i] and distance_to_center <= radii[i] + 1:
-					print("Border!")
+					#print("Border!")
 					# The tile is just outside the current radius, so add a border tile here
 					tilemap.set_cell(0, tile_coords, 1, border_tile_ids[i], 0)  # Place a border tile at the position
 					break
 				elif distance_to_center <= radii[i]:
-					print("Floor!")
+					#print("Floor!")
 					# The tile is within the current radius, so add a floor tile here
-					tilemap.set_cell(0, tile_coords, 1, floor_tile_ids[i], 0)  # Place a border tile at the position
+					if i == 0:
+						tilemap.set_cell(0, tile_coords, -1, Vector2.ZERO, 0)  # Place a border tile at the position
+					else:
+						tilemap.set_cell(0, tile_coords, 1, floor_tile_ids[i], 0)  # Place a border tile at the position
 					break
+
+	# Erase the center tiles fo r the pit
+	var grid_size = 9
+	for x in range(-grid_size / 2, grid_size / 2 + 1):
+		for y in range(-grid_size / 2, grid_size / 2 + 1):
+			var grid_position = center + Vector2(x, y)
+			tilemap.set_cell(0, grid_position, -1, Vector2.ZERO, 0)
+
+
+func _on_body_entered_pit(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_entered_pit.emit(body)
+		if body.has_method("take_damage"):
+			var pit_damage: float = 50.0
+			body.take_damage({"damage_type": "pit", "damage": pit_damage})
+
+func _on_body_exited_pit(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_exited_pit.emit(body)
+
+func _on_danger_area_entered(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_entered_pit_danger_area.emit(body)
+
+func _on_danger_area_exited(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_exited_pit_danger_area.emit(body)
+
+
+
+# Danger Zone
+func _on_danger_body_entered(body) -> void:
+	_on_danger_area_entered(body)
+
+func _on_danger_body_exited(body) -> void:
+	_on_danger_area_exited(body)
+
+# Kill Zone
+func _on_pit_body_entered(body) -> void:
+	_on_body_entered_pit(body)
+
+func _on_pit_body_exited(body) -> void:
+	_on_body_exited_pit(body)
+

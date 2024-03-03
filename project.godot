@@ -22,6 +22,7 @@ Signals="*res://Scripts/Autoload/Signals.gd"
 PlayerData="*res://Scripts/Autoload/PlayerData.gd"
 Global="*res://Scripts/Autoload/Global.gd"
 GlobalTime="*res://Scripts/Autoload/time.gd"
+Audio="*res://Scripts/Autoload/Audio.gd"
 
 [display]
 

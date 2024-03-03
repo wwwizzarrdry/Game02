@@ -8,6 +8,8 @@ extends Node2D
 
 # World Objects
 @onready var world_camera: Camera2D = $WorldCamera
+@onready var world: Node2D = $World
+@onready var player: CharacterBody2D = $Player
 
 var root
 var viewport
@@ -26,8 +28,6 @@ var camera_targets = []
 
 
 func _ready() -> void:
-	root = Global.get_root()
-	viewport = Global.get_root_viewport()
 	pass
 
 func _input(event):
@@ -147,9 +147,9 @@ func draw_cam_rect(r):
 	cam_rect = r
 	queue_redraw()
 
-
 func _on_timer_timeout() -> void:
 	#if $Player.max_distance >= 500:
 	$Player.max_distance -= 10
-	print($Player.max_distance)
 	$Timer.start()
+
+
