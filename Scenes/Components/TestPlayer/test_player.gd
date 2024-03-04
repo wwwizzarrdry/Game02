@@ -225,13 +225,13 @@ func random_outfit():
 func play_audio(val: String) -> void:
 	match val:
 		"player_shield_damaged":
-			Audio.queue({"listener": $PLayerAudioListener, "device": $PlayerShieldDamaged})
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldDamaged})
 		"player_shield_broken":
 			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldBroken})
 		"player_health_damaged":
 			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerHealthDamaged})
 		"player_death":
-			Audio.queue({"listener": $PLayerAudioListener, "device": $PlayerDeath})
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerDeath})
 		_:
 			return
 

@@ -1,5 +1,6 @@
 extends Node2D
 
+const magic = preload("res://Particles/Magin.tscn")
 @onready var tilemap = $TileMap
 @onready var pit_danger_area: Area2D = $PitTrap/Danger
 @onready var pit_area: Area2D = $PitTrap/Pit
@@ -14,6 +15,7 @@ func _ready() -> void:
 
 	self.z_index = -1
 	generate_tiles()
+	draw_ring(5000.0)
 
 	pass # Replace with function body.
 
@@ -86,7 +88,74 @@ func _on_danger_area_exited(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_exited_pit_danger_area.emit(body)
 
+# Ring
+func set_new_radius(val: float):
+	$Ring/RingEdge.shape.radius = val - 256
+	update_ring(val)
 
+func draw_ring(radius):
+	# Number of points in the circle
+	var points_count = 500
+	var points = PackedVector2Array()
+	for i in range(points_count):
+		var angle = i * 2.0 * PI / points_count
+		var point = Vector2(cos(angle), sin(angle)) * radius
+		points.append(point)
+
+		# Add particles to the emission points
+		var particles = magic.instantiate()
+		particles.position = points[i]
+		particles.add_to_group("magic")
+		add_child(particles)
+		particles.set_emitting(true)
+
+	points.append(points[0])
+
+	var particles = magic.instantiate()
+	particles.position = points[0]
+	particles.add_to_group("magic")
+	add_child(particles)
+	particles.set_emitting(true)
+
+	$RingBorder.points = points
+	await Global.timeout(1.0)
+	$RingBorder.visible = true
+
+func update_ring(radius):
+	radius = radius - 100
+	# Number of points in the circle
+	var particles = get_tree().get_nodes_in_group("magic")
+	var points_count: int = $RingBorder.get_point_count()
+	var points: PackedVector2Array = $RingBorder.points
+	for i in range(0, points_count):
+		var angle = i * 2.0 * PI / points_count
+		var point = Vector2(cos(angle), sin(angle)) * radius
+		$RingBorder.set_point_position(i, point)
+		if particles.size() > i:
+			particles[i].position = point
+			set_gravity(particles[i], point)
+	$RingBorder.add_point(Vector2(points[0].x, points[0].y), points_count)
+	particles[-1].position = points[-1]
+
+func set_gravity(particle, point):
+	# Assuming the center of the circle is at (center_x, center_y)
+	var center = $Barricade.position
+
+	# Assuming the particle's current position is at (pos_x, pos_y)
+	var pos = particle.position #a.Vector2(pos_x, pos_y)
+
+	# Calculate the direction vector from the particle to the center
+	var dir = center - pos
+
+	# Normalize the direction vector to get a unit vector
+	var unit_dir = dir.normalized()
+
+	# Multiply the unit vector by the desired strength of gravity
+	var gravity_strength = 20
+	var gravity = unit_dir * gravity_strength
+	# Now, gravity.x and gravity.y are the x and y gravity values
+	particle.process_material.gravity.x = gravity.x
+	particle.process_material.gravity.y = gravity.y
 
 # Danger Zone
 func _on_danger_body_entered(body) -> void:

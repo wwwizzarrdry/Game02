@@ -33,7 +33,7 @@ func play_next_queued_sound():
 
 		current_listener.current = true
 		current_audio.play()
-		current_audio.finished.connect(_on_current_audio_finished)
+		#current_audio.finished.connect(_on_current_audio_finished)
 
 	else:
 		set_default_listener(get_tree().current_scene.get_node_or_null("DefaultListener"))
@@ -41,5 +41,5 @@ func play_next_queued_sound():
 		default_listenser.current = true
 
 func _on_current_audio_finished() -> void:
-	current_audio.finished.disconnect(_on_current_audio_finished)
+	#current_audio.finished.disconnect(_on_current_audio_finished)
 	play_next_queued_sound()

@@ -148,8 +148,12 @@ func draw_cam_rect(r):
 	queue_redraw()
 
 func _on_timer_timeout() -> void:
-	#if $Player.max_distance >= 500:
-	$Player.max_distance -= 10
-	$Timer.start()
+	var radius = $Player.max_distance
+	if radius > 0:
+		radius = radius - 10.0
+		$Player.max_distance = radius
+		$World.set_new_radius(radius)
+		$Timer.start()
+
 
 
