@@ -26,8 +26,8 @@ fog_height = 1.0
 volumetric_fog_enabled = true
 volumetric_fog_albedo = Color(0.427451, 0.52549, 1, 1)
 adjustment_enabled = true
-adjustment_brightness = 0.9
-adjustment_contrast = 1.1
+adjustment_brightness = 0.85
+adjustment_contrast = 1.2
 adjustment_saturation = 1.2
 
 [node name="Game" type="Node2D"]
@@ -39,21 +39,17 @@ script = ExtResource("1_od7q6")
 visible = true
 
 [node name="World" parent="." instance=ExtResource("2_gnwiy")]
-position = Vector2(64, 64)
 
 [node name="Player" parent="." instance=ExtResource("2_78d53")]
-position = Vector2(1580, 24)
+position = Vector2(2639, 76)
 character_gun = "Rifle"
 
-[node name="Timer" type="Timer" parent="."]
-autostart = true
-
 [node name="WorldCamera" parent="." instance=ExtResource("2_btvqd")]
-position = Vector2(1549, 24)
+position = Vector2(2608, 76)
 position_smoothing_enabled = true
 min_zoom = 10.0
 max_zoom = 0.1
-margin = Vector2(850, 850)
+margin = Vector2(1000, 1000)
 
 [node name="DefaultListener" type="AudioListener2D" parent="."]
 current = true
@@ -73,5 +69,8 @@ energy = 0.5
 shadow_enabled = true
 texture = ExtResource("7_8x2de")
 texture_scale = 0.25
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

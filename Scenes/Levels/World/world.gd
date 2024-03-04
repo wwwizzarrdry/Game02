@@ -1,9 +1,12 @@
 extends Node2D
 
-const magic = preload("res://Particles/Magin.tscn")
+const magic = preload("res://Particles/Magic.tscn")
 @onready var tilemap = $TileMap
 @onready var pit_danger_area: Area2D = $PitTrap/Danger
 @onready var pit_area: Area2D = $PitTrap/Pit
+@onready var void_monster: CharacterBody2D = $VoidMonster
+
+var ring_radius: float = 5000.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -15,10 +18,14 @@ func _ready() -> void:
 
 	self.z_index = -1
 	generate_tiles()
-	draw_ring(5000.0)
-
+	draw_ring(ring_radius)
 	pass # Replace with function body.
 
+func _process(delta: float) -> void:
+	# Get closest target
+	scale_to_closest_player(void_monster, delta)
+
+# Tile Generation ----------------------------
 func generate_tiles() -> void:
 	# Define your arrays of radii and tile IDs here
 	var radii = [3, 8, 16, 22, 30, 40]
@@ -68,34 +75,17 @@ func generate_tiles() -> void:
 			var grid_position = center + Vector2(x, y)
 			tilemap.set_cell(0, grid_position, -1, Vector2.ZERO, 0)
 
-
-func _on_body_entered_pit(body) -> void:
-	if body.is_in_group("player"):
-		Signals.player_entered_pit.emit(body)
-		if body.has_method("take_damage"):
-			var pit_damage: float = 50.0
-			body.take_damage({"damage_type": "pit", "damage": pit_damage})
-
-func _on_body_exited_pit(body) -> void:
-	if body.is_in_group("player"):
-		Signals.player_exited_pit.emit(body)
-
-func _on_danger_area_entered(body) -> void:
-	if body.is_in_group("player"):
-		Signals.player_entered_pit_danger_area.emit(body)
-
-func _on_danger_area_exited(body) -> void:
-	if body.is_in_group("player"):
-		Signals.player_exited_pit_danger_area.emit(body)
-
-# Ring
+# Ring ---------------------------------------
 func set_new_radius(val: float):
-	$Ring/RingEdge.shape.radius = val - 256
+	ring_radius = clamp(val - 256, 0, val) # subtract a buffer zone
+
+	#exiting this area deals ring damage
+	$Ring/RingEdge.shape.radius = ring_radius
 	update_ring(val)
 
 func draw_ring(radius):
 	# Number of points in the circle
-	var points_count = 500
+	var points_count = 360
 	var points = PackedVector2Array()
 	for i in range(points_count):
 		var angle = i * 2.0 * PI / points_count
@@ -108,7 +98,6 @@ func draw_ring(radius):
 		particles.add_to_group("magic")
 		add_child(particles)
 		particles.set_emitting(true)
-
 	points.append(points[0])
 
 	var particles = magic.instantiate()
@@ -117,25 +106,26 @@ func draw_ring(radius):
 	add_child(particles)
 	particles.set_emitting(true)
 
-	$RingBorder.points = points
-	await Global.timeout(1.0)
-	$RingBorder.visible = true
+	#$RingBorder.points = points
+	#await Global.timeout(1.0)
+	#$RingBorder.visible = true
 
 func update_ring(radius):
-	radius = radius - 100
+	ring_radius = (radius - (0.05 * radius))
+	radius = ring_radius
 	# Number of points in the circle
 	var particles = get_tree().get_nodes_in_group("magic")
-	var points_count: int = $RingBorder.get_point_count()
-	var points: PackedVector2Array = $RingBorder.points
+	var points_count: int = particles.size() #$RingBorder.get_point_count()
+	#var points: PackedVector2Array = $RingBorder.points
 	for i in range(0, points_count):
 		var angle = i * 2.0 * PI / points_count
 		var point = Vector2(cos(angle), sin(angle)) * radius
-		$RingBorder.set_point_position(i, point)
+		#$RingBorder.set_point_position(i, point)
 		if particles.size() > i:
 			particles[i].position = point
 			set_gravity(particles[i], point)
-	$RingBorder.add_point(Vector2(points[0].x, points[0].y), points_count)
-	particles[-1].position = points[-1]
+	#$RingBorder.add_point(Vector2(points[0].x, points[0].y), points_count)
+	#particles[-1].position = points[-1]
 
 func set_gravity(particle, point):
 	# Assuming the center of the circle is at (center_x, center_y)
@@ -157,14 +147,104 @@ func set_gravity(particle, point):
 	particle.process_material.gravity.x = gravity.x
 	particle.process_material.gravity.y = gravity.y
 
-# Danger Zone
+# Scale Pit Monster bases onclosest player distance
+func scale_to_closest_player(from_node: CharacterBody2D, delta: float):
+	var target: Array = get_closest_player(from_node)
+	if target[0] == null:
+		return
+
+	# Scale porportionally
+	var min_distance:= 0.1
+	#var min_distance:= -5000.0 + ring_radius
+	var max_distance:= 3000.0
+	var min_scale:= 0.001
+	var max_scale:= 4.0
+	var distance: float = target[1]
+	var t = inverse_lerp(min_distance, max_distance, distance)
+	var scale = lerp(max_scale, min_scale, t)
+	from_node.scale = Vector2(scale, scale)
+
+	# Rotate to face the target
+	var rotation_speed = 10
+	var max_rotation_speed = 60.0
+	var acceleration = 300.0
+
+	var target_position: Vector2 = target[0].position # the actual position of the closest target
+	var target_angle: float = from_node.global_position.angle_to_point(target_position)
+	var angle_difference: float = from_node.rotation - target_angle
+
+	# Adjust the rotation speed
+	if angle_difference > PI:
+		angle_difference -= 2 * PI
+	elif angle_difference < -PI:
+		angle_difference += 2 * PI
+
+	rotation_speed += acceleration * delta
+	rotation_speed = clamp(rotation_speed, 0, max_rotation_speed)
+
+	# Rotate the character to face the target
+	from_node.rotation = lerp_angle(from_node.rotation, target_angle, rotation_speed * delta)
+
+func get_closest_node_in_group(node_A, target_group):
+	var target_nodes = get_tree().get_nodes_in_group(target_group)
+	var closest_node = null
+	var closest_distance = INF
+
+	for node in target_nodes:
+		var distance = node_A.global_position.distance_to(node.global_position)
+		if distance < closest_distance:
+			closest_distance = distance
+			closest_node = node
+
+	return closest_node
+
+func get_closest_player(node_A) -> Array:
+	var target_nodes = get_parent().get_node("WorldCamera").targets
+	var closest_node = null
+	var closest_distance = INF
+
+	if target_nodes.size() == 0:
+		return [null, null]
+
+	for node in target_nodes:
+		var distance = node_A.global_position.distance_to(node.global_position)
+		if distance < closest_distance:
+			closest_distance = distance
+			closest_node = node
+
+	return [closest_node, closest_distance]
+
+
+# Pit Danger Area ----------------------------
+func _on_danger_area_entered(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_entered_pit_danger_area.emit(body)
+
+func _on_danger_area_exited(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_exited_pit_danger_area.emit(body)
+
+
+# Danger Zone ----------------------------------
 func _on_danger_body_entered(body) -> void:
 	_on_danger_area_entered(body)
 
 func _on_danger_body_exited(body) -> void:
 	_on_danger_area_exited(body)
 
-# Kill Zone
+# Pit Collision ------------------------------
+func _on_body_entered_pit(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_entered_pit.emit(body)
+		if body.has_method("take_damage"):
+			var pit_damage: float = 50.0
+			body.take_damage({"damage_type": "pit", "damage": pit_damage})
+
+func _on_body_exited_pit(body) -> void:
+	if body.is_in_group("player"):
+		Signals.player_exited_pit.emit(body)
+
+#Kill Zone -------------------------------------
 func _on_pit_body_entered(body) -> void:
 	_on_body_entered_pit(body)
 

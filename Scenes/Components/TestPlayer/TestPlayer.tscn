@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dppgsdv33qh5"]
+[gd_scene load_steps=16 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
 [ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
@@ -17,10 +17,6 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
 
-[sub_resource type="Curve" id="Curve_h7uwt"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 scale = Vector2(0.5, 0.5)
 script = ExtResource("1_g7upe")
@@ -31,13 +27,12 @@ shape = SubResource("CircleShape2D_mpxel")
 [node name="Laser" type="RayCast2D" parent="."]
 position = Vector2(200, 20)
 enabled = false
-target_position = Vector2(3000, 0)
+target_position = Vector2(3500, 0)
 collide_with_areas = true
 
 [node name="LaserBeam" type="Line2D" parent="Laser"]
-points = PackedVector2Array(0, 0, 3000, 0)
-width = 2.0
-width_curve = SubResource("Curve_h7uwt")
+points = PackedVector2Array(0, 0, 3500, 0)
+width = 8.0
 default_color = Color(1, 0.0235294, 0, 0.745098)
 
 [node name="BodyParts" type="Node2D" parent="."]

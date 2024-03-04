@@ -151,9 +151,14 @@ func _on_timer_timeout() -> void:
 	var radius = $Player.max_distance
 	if radius > 0:
 		radius = radius - 10.0
-		$Player.max_distance = radius
-		$World.set_new_radius(radius)
-		$Timer.start()
+	else:
+		radius = 5000.0
+
+	$Player.max_distance = radius
+	$World.set_new_radius(radius)
+	$Timer.start()
+
+
 
 
 

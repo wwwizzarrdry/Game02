@@ -20,6 +20,8 @@ extends Control
 @onready var player_connected: AudioStreamPlayer2D = $PlayerConnected
 @onready var ready_confirmed: AudioStreamPlayer2D = $ReadyConfirmed
 
+var next_scene: PackedScene = preload("res://Scenes/Game.tscn")
+
 var current_scene
 var gamepads = []
 var players_ready = []
@@ -210,7 +212,8 @@ func start_game():
 	PlayerData.player_count = players_ready.size()
 	print("player count: " + str(PlayerData.player_count))
 	ready_confirmed.play()
-	current_scene.load_level()
+	await Global.timeout(1)
+	call_deferred("_change_scene")
 
 func toggle_pulsing(node, is_pulsing: bool) -> void:
 	node.get_material().set_shader_parameter("is_pulsing", is_pulsing)
@@ -234,3 +237,6 @@ func _on_ready_btn_pressed() -> void:
 func _on_back_btn_pressed() -> void:
 	devices_panel.visible = true
 	ready_panel.visible = false
+
+func _change_scene():
+	get_tree().change_scene_to_packed(next_scene)

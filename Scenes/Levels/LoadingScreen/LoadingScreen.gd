@@ -5,6 +5,8 @@ extends Control
 @onready var logger: Label = $PanelContainer/VBoxContainer/Log
 @onready var continue_btn: Button = $PanelContainer/VBoxContainer/ContinueBtn
 
+var next_scene: PackedScene = preload("res://Scenes/Levels/StartScreen/StartScreen.tscn")
+
 var current_scene
 var folder = "res://Assets/"
 var total_resources = []
@@ -80,4 +82,7 @@ func _on_continue_btn_pressed() -> void:
 	continue_btn.disabled = true
 	#Input.set_action_set_active("ui_accept", false)  # Disable the "ui_accept" action
 	set_process_input(false)  # Disable input processing
-	current_scene.load_level()
+	call_deferred("change_scene")
+
+func change_scene():
+	get_tree().change_scene_to_packed(next_scene)
