@@ -59,6 +59,8 @@ var friction: float = acceleration / speed
 var deadzoneThreshold: float = 0.2
 var deadzoneADSThreshold: float = 0.1
 var is_aiming = false
+var can_shoot = true
+var is_shooting = false
 
 var max_health: float = 100.0
 var max_shield: float = 100.0
@@ -98,7 +100,9 @@ var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
 func _process(delta: float) -> void:
 
-	Global.apply_tether_force(delta, self, Vector2(64, 64), max_distance, 3.0)
+	Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
+
+	shoot()
 
 	if is_aiming:
 
@@ -137,6 +141,12 @@ func get_input(_delta):
 	if Input.is_action_just_released("aim"):
 		show_laser(false)
 
+	#  Shoot
+	if Input.is_action_pressed('shoot'):
+		is_shooting = true
+	else:
+		is_shooting = false
+
 	# Chane Weapon
 	if Input.is_action_just_pressed('change_weapon'):
 		change_weapons()
@@ -144,6 +154,7 @@ func get_input(_delta):
 	# Chane Outfit
 	if Input.is_action_just_pressed('inv_right'):
 		random_outfit()
+
 
 func set_move_direction(delta: float) -> void:
 
@@ -183,6 +194,8 @@ func apply_traction(delta: float) -> void:
 func apply_friction(delta: float) -> void:
 	velocity -= velocity * friction * delta
 
+
+
 func toggle_sprint() -> void:
 	if speed >= 800:
 		set_move_speed(500)
@@ -191,6 +204,8 @@ func toggle_sprint() -> void:
 
 func set_move_speed(s) -> void:
 	speed = s
+
+
 
 func change_weapons() -> void:
 	var next_gun = wrap(current_gun + 1, 0, all_guns.size())
@@ -210,6 +225,14 @@ func show_laser(val) -> void:
 	laser.enabled = is_aiming
 	laser.visible = is_aiming
 
+func shoot() -> void:
+	if can_shoot and is_shooting:
+		print($ArcBeam.is_colliding())
+		$ArcBeam.global_position = all_guns[current_gun].get_child(0).global_position
+		$ArcBeam.visible = true
+	else:
+		$ArcBeam.visible = false
+
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
 
@@ -220,20 +243,6 @@ func random_outfit():
 	arm_right.texture = outfits.Arm_Right[r]
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
-
-
-func play_audio(val: String) -> void:
-	match val:
-		"player_shield_damaged":
-			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldDamaged})
-		"player_shield_broken":
-			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldBroken})
-		"player_health_damaged":
-			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerHealthDamaged})
-		"player_death":
-			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerDeath})
-		_:
-			return
 
 func take_damage(data):
 	print(name + " took " + data.damage_type + " damage for " + str(data.damage) + "HP!")
@@ -262,6 +271,22 @@ func take_damage(data):
 
 	print("Shield: ", current_shield)
 	print("Health: ", current_health)
+
+
+
+
+func play_audio(val: String) -> void:
+	match val:
+		"player_shield_damaged":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldDamaged})
+		"player_shield_broken":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldBroken})
+		"player_health_damaged":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerHealthDamaged})
+		"player_death":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerDeath})
+		_:
+			return
 
 func _on_danger_area_entered(body) -> void:
 	if body == self:

@@ -1,7 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://dppgsdv33qh5"]
+[gd_scene load_steps=18 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
 [ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
+[ext_resource type="PackedScene" uid="uid://5yuisjs7sdry" path="res://Scenes/Components/Laser/Laser.tscn" id="2_huri3"]
 [ext_resource type="Texture2D" uid="uid://q7bto250adn6" path="res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Yellow.tres" id="4_dkyin"]
 [ext_resource type="Texture2D" uid="uid://b0r1mv5v86rko" path="res://Scenes/Components/Weapons/Rifle.tres" id="5_8taew"]
 [ext_resource type="Texture2D" uid="uid://bt5r0txrayufp" path="res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Yellow.tres" id="5_43d7m"]
@@ -14,6 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://bb7qj3rrlpixy" path="res://Assets/Audio/SFX/shield_broken.wav" id="12_ipw16"]
 [ext_resource type="AudioStream" uid="uid://df5xq1mlb3qyh" path="res://Assets/Audio/SFX/health_damage.wav" id="13_6043p"]
 [ext_resource type="AudioStream" uid="uid://ctdb8bgv1kyiw" path="res://Assets/Audio/SFX/power-down.wav" id="14_2je56"]
+[ext_resource type="PackedScene" uid="uid://dpk2a7bnjwrah" path="res://Scenes/Components/ArcBeam/ArcBeam.tscn" id="16_6ppro"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
 
@@ -24,16 +26,8 @@ script = ExtResource("1_g7upe")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_mpxel")
 
-[node name="Laser" type="RayCast2D" parent="."]
-position = Vector2(200, 20)
-enabled = false
-target_position = Vector2(3500, 0)
-collide_with_areas = true
-
-[node name="LaserBeam" type="Line2D" parent="Laser"]
-points = PackedVector2Array(0, 0, 3500, 0)
-width = 8.0
-default_color = Color(1, 0.0235294, 0, 0.745098)
+[node name="Laser" parent="." instance=ExtResource("2_huri3")]
+visible = false
 
 [node name="BodyParts" type="Node2D" parent="."]
 
@@ -87,6 +81,7 @@ metadata/position_locked = false
 [node name="Guns" type="Node2D" parent="BodyParts"]
 
 [node name="Rifle" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
 position = Vector2(180, 20)
 rotation = -1.5708
 texture = ExtResource("5_8taew")
@@ -98,6 +93,7 @@ position = Vector2(-0.000606537, 168)
 rotation = 1.5708
 
 [node name="Shotgun" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
 position = Vector2(180, 20)
 rotation = -1.5708
 texture = ExtResource("6_ncyvl")
@@ -117,11 +113,10 @@ metadata/gun_name = "Uzi"
 metadata/position_locked = false
 
 [node name="MuzzleUzi" type="Marker2D" parent="BodyParts/Guns/Uzi"]
-position = Vector2(-0.00025177, -70)
+position = Vector2(-0.000228882, -64)
 rotation = -1.5708
 
 [node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
-visible = false
 position = Vector2(190, 20)
 rotation = -1.5708
 texture = ExtResource("8_27udi")
@@ -129,7 +124,7 @@ metadata/gun_name = "Pistol"
 metadata/position_locked = false
 
 [node name="MuzzlePistol" type="Marker2D" parent="BodyParts/Guns/Pistol"]
-position = Vector2(-0.00025177, 70)
+position = Vector2(-0.00012207, 58)
 rotation = 1.5708
 
 [node name="Head" type="Sprite2D" parent="BodyParts"]
@@ -153,3 +148,8 @@ max_polyphony = 3
 stream = ExtResource("14_2je56")
 
 [node name="PlayerAudioListener" type="AudioListener2D" parent="."]
+
+[node name="ArcBeam" parent="." instance=ExtResource("16_6ppro")]
+position = Vector2(250, 0)
+texture_color = Color(0, 0.984314, 3.36863, 1)
+line_width = 2000

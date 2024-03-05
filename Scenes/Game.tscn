@@ -42,7 +42,6 @@ visible = true
 
 [node name="Player" parent="." instance=ExtResource("2_78d53")]
 position = Vector2(2639, 76)
-character_gun = "Rifle"
 
 [node name="WorldCamera" parent="." instance=ExtResource("2_btvqd")]
 position = Vector2(2608, 76)
@@ -60,9 +59,6 @@ volume_db = -20.0
 autoplay = true
 max_distance = 5000.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_pn7j4")
-
 [node name="PointLight2D" type="PointLight2D" parent="."]
 color = Color(1, 0.513726, 0.00784314, 1)
 energy = 0.5
@@ -72,5 +68,8 @@ texture_scale = 0.25
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pn7j4")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

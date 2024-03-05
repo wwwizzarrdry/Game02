@@ -16,15 +16,18 @@ func get_root_viewport():
 	return vp
 
 func get_root_viewport_size():
-	var r = get_root()
-	var vp = r.get_root_viewport()
+	#var r = get_root()
+	var vp = get_tree().get_viewport()
 	var vs = vp.get_viewport_rect().size
 	return vs
 
-func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: int, mass: float):
+func get_damage_template() -> Dictionary:
+	return {"damage_type": "", "damage": 0}
 
-	var IDEAL_ROPE_DISTANCE = max_dist - 100 # adjust as needed
-	var ROPE_SPRING_CONSTANT = 100 # adjust as needed
+func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: float, mass: float):
+
+	var IDEAL_ROPE_DISTANCE = max_dist - 100.0 # adjust as needed
+	var ROPE_SPRING_CONSTANT = 100.0 # adjust as needed
 
 	var rope_vector = object.position - center_point
 	var rope_distance = rope_vector.length()
