@@ -112,7 +112,7 @@ func draw_particle_ring(radius):
 	particles1.set_emitting(true)
 
 func update_particle_ring(radius):
-	ring_radius = radius #(radius - (0.05 * radius))
+	ring_radius = radius - (0.03 * radius)
 	radius = ring_radius
 	# Number of points in the circle
 	var particles = get_tree().get_nodes_in_group("magic")

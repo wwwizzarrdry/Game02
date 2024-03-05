@@ -1,0 +1,133 @@
+[gd_scene load_steps=7 format=3 uid="uid://bk7dvd8cnwvjy"]
+
+[ext_resource type="Script" path="res://Scenes/Components/DamageNumber/DamageNumber.gd" id="1_rimgp"]
+[ext_resource type="FontFile" uid="uid://u1s7q16yfdno" path="res://Assets/Fonts/roboto/Roboto-Regular.ttf" id="2_nx3bn"]
+
+[sub_resource type="Animation" id="Animation_bwdyn"]
+resource_name = "Damage_Number_Anim"
+step = 0.01
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LabelContainer:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0, 2, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.41, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LabelContainer:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0, 2, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.41, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("LabelContainer:modulate:a")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.26, 1)
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.99),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"remove"
+}]
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("LabelContainer:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 200, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("LabelContainer:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-50, -0.25, 0, 0.25, 0, -450, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="Animation" id="Animation_krps3"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LabelContainer:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7w5jp"]
+_data = {
+"Damage_Number_Anim": SubResource("Animation_bwdyn"),
+"RESET": SubResource("Animation_krps3")
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_abn22"]
+font = ExtResource("2_nx3bn")
+font_size = 82
+outline_size = 22
+
+[node name="DamageNumber" type="Node2D"]
+script = ExtResource("1_rimgp")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_7w5jp")
+}
+
+[node name="LabelContainer" type="Node2D" parent="."]
+position = Vector2(200, -450)
+scale = Vector2(1e-05, 1e-05)
+
+[node name="Label" type="Label" parent="LabelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.5
+offset_top = -75.5
+offset_right = 150.5
+offset_bottom = 75.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "123"
+label_settings = SubResource("LabelSettings_abn22")
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3

@@ -42,7 +42,7 @@ func get_shield() -> float:
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
 @onready var laser: RayCast2D = $Laser
-
+@onready var DAMAGE_NUMBER = preload("res://Scenes/Components/DamageNumber/DamageNumber.tscn")
 
 var outfits = {
 	"Shoulders": [preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres")],
@@ -230,6 +230,11 @@ func shoot() -> void:
 		print($ArcBeam.is_colliding())
 		$ArcBeam.global_position = all_guns[current_gun].get_child(0).global_position
 		$ArcBeam.visible = true
+		if $ArcBeam.is_colliding():
+			var dmg_lbl= DAMAGE_NUMBER.instantiate()
+			get_parent().add_child(dmg_lbl)
+			dmg_lbl.global_position = $ArcBeam.get_collision_point()
+			dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
 	else:
 		$ArcBeam.visible = false
 
@@ -251,7 +256,17 @@ func take_damage(data):
 	var current_health = get_health()
 	var remaining_damage = clamp(damage - current_shield, 0.0, damage)
 
+
 	if current_shield > 0:
+		var dmg_lbl1 = DAMAGE_NUMBER.instantiate()
+		get_parent().add_child(dmg_lbl1)
+		dmg_lbl1.global_position = self.global_position
+
+		if remaining_damage == 0:
+			dmg_lbl1.set_label(str(round(clamp(damage, 0.0, max_shield))), Color(0.169, 0.757, 1))
+		else:
+			dmg_lbl1.set_label(str(round(clamp(current_shield - damage, 0.0, max_shield))), Color(0.169, 0.757, 1))
+
 		play_audio("player_shield_damaged")
 		set_shield(clamp(current_shield - damage, 0.0, max_shield))
 		current_shield = get_shield()
@@ -260,14 +275,21 @@ func take_damage(data):
 			play_audio("player_shield_broken")
 
 	if current_health > 0:
-		play_audio("player_health_damaged")
-		set_health(clamp(current_health - remaining_damage, 0.0, max_health))
-		current_health = get_health()
+		if remaining_damage > 0:
+			var dmg_lbl2 = DAMAGE_NUMBER.instantiate()
+			get_parent().add_child(dmg_lbl2)
+			dmg_lbl2.global_position = self.global_position
+			dmg_lbl2.set_label(str(round(remaining_damage)), Color(1, 0.251, 0.169, 1))
 
-		if current_health == 0:
-			play_audio("player_death")
-			Signals.player_died.emit(self)
-			on_player_died(self)
+			play_audio("player_health_damaged")
+			set_health(clamp(current_health - remaining_damage, 0.0, max_health))
+			current_health = get_health()
+
+	if current_health == 0:
+		play_audio("player_death")
+		Signals.player_died.emit(self)
+		on_player_died(self)
+
 
 	print("Shield: ", current_shield)
 	print("Health: ", current_health)
