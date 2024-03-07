@@ -1,21 +1,21 @@
 [gd_scene load_steps=5 format=3 uid="uid://sje25mt2k15s"]
 
-[ext_resource type="Script" path="res://Scenes/main.gd" id="1_2qqrh"]
-[ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="2_eetkr"]
-[ext_resource type="TileSet" uid="uid://diua6r7w7rt0j" path="res://Scenes/Levels/WorldTileset.tres" id="2_ofnuo"]
-[ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="3_ia1f3"]
+[ext_resource type="Script" path="res://Scenes/main.gd" id="1_e0uxv"]
+[ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="2_l0b1n"]
+[ext_resource type="TileSet" uid="uid://diua6r7w7rt0j" path="res://Scenes/Levels/WorldTileset.tres" id="3_2eohn"]
+[ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="4_c3038"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_2qqrh")
+script = ExtResource("1_e0uxv")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="HUD" parent="CanvasLayer" instance=ExtResource("3_ia1f3")]
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("2_l0b1n")]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TileMap" type="TileMap" parent="."]
-tile_set = ExtResource("2_ofnuo")
+tile_set = ExtResource("3_2eohn")
 format = 2
 
 [node name="Spawn1" type="Marker2D" parent="."]
@@ -24,5 +24,5 @@ position = Vector2(108, 115)
 [node name="Spawn2" type="Marker2D" parent="."]
 position = Vector2(1006, 561)
 
-[node name="WorldCamera" parent="." instance=ExtResource("2_eetkr")]
+[node name="WorldCamera" parent="." instance=ExtResource("4_c3038")]
 position = Vector2(638, 362)
