@@ -47,7 +47,6 @@ texture = ExtResource("2_bxd32")
 
 [node name="Pit" type="Area2D" parent="WorldOffset/PitTrap"]
 collision_layer = 4
-collision_mask = 7
 
 [node name="KillZone" type="CollisionShape2D" parent="WorldOffset/PitTrap/Pit"]
 position = Vector2(-0.5, -1)
@@ -56,19 +55,21 @@ debug_color = Color(0.968627, 0.172549, 0, 0.419608)
 
 [node name="Danger" type="Area2D" parent="WorldOffset/PitTrap"]
 collision_layer = 4
-collision_mask = 7
 
 [node name="DangerZone" type="CollisionShape2D" parent="WorldOffset/PitTrap/Danger"]
 shape = SubResource("CircleShape2D_0m673")
 
 [node name="Ring" type="Area2D" parent="WorldOffset"]
 collision_layer = 4
+collision_mask = 3
 
 [node name="RingEdge" type="CollisionShape2D" parent="WorldOffset/Ring"]
 shape = SubResource("CircleShape2D_n7q4y")
 debug_color = Color(0.584314, 0.388235, 0.980392, 0.419608)
 
 [node name="VoidMonster" type="CharacterBody2D" parent="WorldOffset"]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WorldOffset/VoidMonster"]
 shape = SubResource("CircleShape2D_f7ajj")

@@ -21,7 +21,7 @@ func get_shield() -> float:
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
 @export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 500
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
-@export_enum("Pistol", "Uzi", "Rifle", "Shotgun") var character_gun: String = "Pistol"
+@export_enum("Pistol", "Uzi", "Rifle", "Shotgun", "Machinegun", "Sniper", "Missile", "RPG", "Laser", "Grenade") var character_gun: String = "Pistol"
 @export var player_skin: Dictionary = {
 	"backpack": preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres"),
 	"shoulders": preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres"),
@@ -31,27 +31,40 @@ func get_shield() -> float:
 }
 
 @onready var body_parts: Node = $BodyParts
+@onready var head: Sprite2D = $BodyParts/Head
 @onready var backpack: Sprite2D = $BodyParts/Backpack
 @onready var shoulders: Sprite2D = $BodyParts/Shoulders
 @onready var arm_right: Sprite2D = $BodyParts/Arm_Right
 @onready var arm_left: Sprite2D = $BodyParts/Arm_Left
+
 @onready var guns: Node = $BodyParts/Guns
+@onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
+@onready var uzi: Sprite2D = $BodyParts/Guns/Uzi
 @onready var rifle: Sprite2D = $BodyParts/Guns/Rifle
 @onready var shotgun: Sprite2D = $BodyParts/Guns/Shotgun
-@onready var uzi: Sprite2D = $BodyParts/Guns/Uzi
-@onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
-@onready var head: Sprite2D = $BodyParts/Head
+@onready var machinegun: Sprite2D = $BodyParts/Guns/Machinegun
+@onready var sniper: Sprite2D = $BodyParts/Guns/Sniper
+@onready var missile: Sprite2D = $BodyParts/Guns/Missile
+@onready var rpg: Sprite2D = $BodyParts/Guns/RPG
+@onready var rocket: Sprite2D = $BodyParts/Guns/RPG/Rocket
+@onready var grenade: Sprite2D = $BodyParts/Guns/Grenade
 @onready var laser: RayCast2D = $Laser
+@onready var arc_beam: RayCast2D = $BodyParts/Guns/Laser/ArcBeam
+
+
+# Projectiles
+@onready var grenade_projectile: PackedScene = preload("res://Scenes/Components/Weapons/Projectiles/Grenade.tscn")
 @onready var DAMAGE_NUMBER = preload("res://Scenes/Components/DamageNumber/DamageNumber.tscn")
 
 var outfits = {
-	"Shoulders": [preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres")],
-	"Backpack": [preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Salmon.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres")],
-	"Arm_Left": [preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Salmon.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Yellow.tres")],
-	"Arm_Right": [preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Salmon.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Yellow.tres")],
-	"Head": [preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Brown.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Green_Camo.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Light_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Orange_Gradient.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Red.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Tan.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_White.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Beige.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Head_Dark_Grey.tres")]
+	"Shoulders": [load("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Forest_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Green.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres")],
+	"Backpack": [load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Blue_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Brown.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Forest_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Green.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Green_Camo.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Grey.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Grey_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Olive.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Orange_Gradient.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Red.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Salmon.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Tan.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_White.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres")],
+	"Arm_Left": [load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Blue_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Brown.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Forest_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Green.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Green_Camo.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Grey.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Grey_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Olive.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Orange_Gradient.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Red.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Salmon.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Tan.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_White.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Left_Yellow.tres")],
+	"Arm_Right": [load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Blue_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Brown.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Forest_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Green.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Green_Camo.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Grey.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Grey_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Olive.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Orange_Gradient.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Red.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Salmon.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Tan.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_White.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Arm_Right_Yellow.tres")],
+	"Head": [load("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Blue_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Brown.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Forest_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Green_Camo.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Grey_Digital.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Light_Blue.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Olive.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Orange_Gradient.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Red.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Tan.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_White.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Beige.tres"), load("res://Scenes/Components/TestPlayer/BodyParts/Head_Dark_Grey.tres")]
 }
 
+var last_lookDirection: Vector2 = Vector2.ZERO
 var rotate_speed: float = 10.0
 var speed: float = character_speed * 1.2  # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
@@ -68,7 +81,6 @@ var max_shield: float = 100.0
 var all_parts = []
 var all_guns = []
 var current_gun = 0
-
 
 
 func _ready() -> void:
@@ -101,19 +113,15 @@ func _ready() -> void:
 			gun.visible = true
 		i += 1
 
-
-
 # Subtle lean forward while aiming
 var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
 func _process(delta: float) -> void:
 
-	Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
-
+	#Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
 	shoot()
 
 	if is_aiming:
-
 		targetYOffset = 8.0
 		head.offset.y      = lerp(head.offset.y, targetYOffset + 8, lerpSpeed)
 		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset, lerpSpeed)
@@ -175,6 +183,13 @@ func set_move_direction(delta: float) -> void:
 	apply_friction(delta)
 	move_and_slide()
 
+func get_move_direction() -> Vector2:
+	var move_direction: Vector2 = Vector2(
+		-Input.get_action_strength("move_left") + Input.get_action_strength("move_right"),
+		+Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	).normalized()
+	return move_direction
+
 func set_aim_direction(delta: float) -> void:
 	# Rotation using right analog stick
 	var deadzone := deadzoneThreshold
@@ -190,7 +205,15 @@ func set_aim_direction(delta: float) -> void:
 	).normalized()
 
 	if lookDirection.length() >= deadzone:
+		last_lookDirection = lookDirection
 		rotation = lerp_angle(rotation, lookDirection.angle(), turn_speed * delta)
+
+func get_aim_direction() -> Vector2:
+	var lookDirection := Vector2(
+		-Input.get_action_strength("aim_left") + Input.get_action_strength("aim_right"),
+		+Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
+	).normalized()
+	return lookDirection
 
 func apply_traction(delta: float) -> void:
 	var traction: Vector2 = Vector2(
@@ -202,8 +225,6 @@ func apply_traction(delta: float) -> void:
 func apply_friction(delta: float) -> void:
 	velocity -= velocity * friction * delta
 
-
-
 func toggle_sprint() -> void:
 	if speed >= 800:
 		set_move_speed(500)
@@ -214,17 +235,14 @@ func set_move_speed(s) -> void:
 	speed = s
 
 
-
 func change_weapons() -> void:
+	is_shooting = false
 	var next_gun = wrap(current_gun + 1, 0, all_guns.size())
-
 	for i in range(all_guns.size()):
 		all_guns[i].visible = false
 		if i == next_gun:
 			all_guns[i].visible = true
-			laser.global_position = all_guns[i].get_child(0).global_position
 	current_gun = next_gun
-
 	pass
 
 func show_laser(val) -> void:
@@ -233,24 +251,127 @@ func show_laser(val) -> void:
 	laser.enabled = is_aiming
 	laser.visible = is_aiming
 
+# Fire Weapons
 var arc_beam_pause = false
 func shoot() -> void:
 	if can_shoot and is_shooting:
-		$ArcBeam.global_position = all_guns[current_gun].get_child(0).global_position
-		$ArcBeam.enabled = true
-		$ArcBeam.visible = true
-		if $ArcBeam.is_colliding() and !arc_beam_pause:
+		print(current_gun, ": ", all_guns[current_gun].get_meta("gun_name"))
+		match all_guns[current_gun].get_meta("gun_name"):
+			"Pistol": fire_pistol()            #0
+			"Uzi": fire_uzi()                  #1
+			"Rifle": fire_rifle()              #2
+			"Shotgun": fire_shotgun()          #3
+			"Machinegun": fire_machinegun()    #4
+			"Sniper": fire_sniper()            #5
+			"Missile": fire_missile()          #6
+			"RPG": fire_rpg()                  #7
+			"Grenade": fire_grenade()          #8
+			"Laser": fire_laser()              #9
+			_:
+				can_shoot = true
+				return
+	else:
+		arc_beam.enabled = false
+		arc_beam.visible = false
+		arc_beam_pause = false
+
+func fire_pistol() -> void:
+	print("Fire Pistol")
+	can_shoot = false
+	await Global.timeout(1.0)
+	can_shoot = true
+	pass
+
+func fire_uzi() -> void:
+	print("Fire Uzi")
+	can_shoot = false
+	await Global.timeout(0.12)
+	can_shoot = true
+	pass
+
+func fire_rifle() -> void:
+	print("Fire Rifle")
+	can_shoot = false
+	await Global.timeout(0.237)
+	can_shoot = true
+	pass
+
+func fire_shotgun() -> void:
+	print("Fire Shotgun")
+	can_shoot = false
+	await Global.timeout(1.48)
+	can_shoot = true
+	pass
+
+func fire_machinegun() -> void:
+	print("Fire Machinegun")
+	can_shoot = false
+	await Global.timeout(0.187)
+	can_shoot = true
+	pass
+
+func fire_sniper() -> void:
+	print("Fire Sniper")
+	can_shoot = false
+	await Global.timeout(2.42)
+	can_shoot = true
+	pass
+
+func fire_missile() -> void:
+	print("Fire Missile")
+	can_shoot = false
+	await Global.timeout(3.67)
+	can_shoot = true
+	pass
+
+func fire_rpg() -> void:
+	print("Fire RPG")
+	can_shoot = false
+	await Global.timeout(3.15)
+	can_shoot = true
+	pass
+
+func fire_grenade() -> void:
+	can_shoot = false
+	grenade.hide()
+	var g = grenade_projectile.instantiate() as RigidBody2D
+	g.position = $BodyParts/Guns/Grenade/MuzzleGrenade.global_position
+
+	if get_aim_direction() == Vector2.ZERO:
+		g.linear_velocity = last_lookDirection * g.speed
+	else:
+		g.linear_velocity = get_aim_direction() * g.speed
+
+	# Apply the total velocity as an impulse to the grenade
+	var total_velocity = get_aim_direction() * g.speed + self.velocity
+	g.apply_impulse(Vector2.ZERO, total_velocity)
+
+	get_parent().get_node("Projectiles").add_child(g)
+
+	await Global.timeout(4.2)
+	can_shoot = true
+	if current_gun == 9: grenade.show()
+	pass
+
+func fire_laser() -> void:
+	if is_shooting and current_gun == 8:
+		arc_beam.enabled = true
+		arc_beam.visible = true
+
+		if arc_beam.is_colliding() and !arc_beam_pause:
 			arc_beam_pause = true
 			var dmg_lbl= DAMAGE_NUMBER.instantiate()
 			get_parent().add_child(dmg_lbl)
-			dmg_lbl.global_position = $ArcBeam.get_collision_point()
+			dmg_lbl.global_position = arc_beam.get_collision_point()
 			dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
-			await Global.timeout(0.1)
+			await Global.timeout(0.25)
 			arc_beam_pause = false
 	else:
-		$ArcBeam.enabled = false
-		$ArcBeam.visible = false
+		arc_beam.enabled = false
+		arc_beam.visible = false
 		arc_beam_pause = false
+	pass
+
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res

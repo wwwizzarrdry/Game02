@@ -43,6 +43,8 @@ visible = true
 [node name="Player" parent="." instance=ExtResource("4_oerhk")]
 position = Vector2(2639, 76)
 
+[node name="Projectiles" type="Node2D" parent="."]
+
 [node name="WorldCamera" parent="." instance=ExtResource("5_y3p4o")]
 position = Vector2(2608, 76)
 position_smoothing_enabled = true

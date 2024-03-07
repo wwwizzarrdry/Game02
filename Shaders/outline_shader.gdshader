@@ -6,7 +6,7 @@ uniform bool on = true;
 uniform float width : hint_range(0.0, 64) = 1.0;
 uniform vec4 outline_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
 uniform int pixel_size : hint_range(1, 10) = 4;
-uniform float width_speed :hint_range(0.1, 10) = 1;
+uniform float width_speed :hint_range(0.0, 10) = 1;
 
 
 void fragment(){

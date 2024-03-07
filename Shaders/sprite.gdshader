@@ -16,20 +16,20 @@ float random (vec2 uv) {
 
 void fragment() {
 	float sin_time = sin(flicker_frequency * TIME * PI);
-	
+
 	if(is_flickering)
 	{
 		COLOR.rgb = sin_time > 0.0 ? COLOR.rgb : flicker_color.rgb;
-	}	
+	}
 }
 
 void vertex()
 {
 	float time = TIME;
-	
+
 	float rand_x = random(vec2(time, time)) * 2.0 - 1.0;
 	float rand_y = random(vec2(time + 1.0, time + 1.0)) * 2.0 - 1.0;
-	
+
 	float dx = is_shaking ? amplitude * rand_x : 0.0;
 	float dy = is_shaking ? amplitude * rand_y : 0.0;
 	VERTEX = vec2(VERTEX.x + dx, VERTEX.y + dy);

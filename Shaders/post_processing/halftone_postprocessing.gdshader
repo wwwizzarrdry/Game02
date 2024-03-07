@@ -65,29 +65,29 @@ vec4 one_pass(vec2 tl_uv, vec2 tr_uv, vec2 bl_uv, vec2 br_uv, vec2 l_uv, sampler
 	vec2 top_uv = mix(tl_uv, tr_uv, l_uv.x);
 	vec2 bot_uv = mix(bl_uv, br_uv, l_uv.x);
 	vec2 pass_uv = mix(top_uv, bot_uv, l_uv.y);
-	
+
 	// Offset the base color UV for each CMYK channel
 	vec2 c_uv = rotated(pass_uv + cyan_offset_position, cyan_offset_rotation);
 	vec2 m_uv = rotated(pass_uv + magenta_offset_position, magenta_offset_rotation);
 	vec2 y_uv = rotated(pass_uv + yellow_offset_position, yellow_offset_rotation);
 	vec2 k_uv = rotated(pass_uv + black_offset_position, black_offset_rotation);
-	
+
 	vec4 c_base_color = texture(tex, c_uv);
 	vec4 m_base_color = texture(tex, m_uv);
 	vec4 y_base_color = texture(tex, y_uv);
 	vec4 k_base_color = texture(tex, k_uv);
-	
+
 	// Get base_colors' CMYK values. Source: https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
 	float c_k = 1.0 - max(max(c_base_color.r, c_base_color.g), max(c_base_color.g, c_base_color.b));
 	float m_k = 1.0 - max(max(m_base_color.r, m_base_color.g), max(m_base_color.g, m_base_color.b));
 	float y_k = 1.0 - max(max(y_base_color.r, y_base_color.g), max(y_base_color.g, y_base_color.b));
-	
+
 	float k = 1.0 - max(max(k_base_color.r, k_base_color.g), max(k_base_color.g, k_base_color.b));
 	float c = (1.0 - c_base_color.r - c_k) / (1.0 - c_k);
 	float m = (1.0 - m_base_color.g - m_k) / (1.0 - m_k);
 	float y = (1.0 - y_base_color.b - y_k) / (1.0 - y_k);
 	float a = texture(tex, pass_uv).a < alpha_threshold ? 0.0f : 1.0f;
-	
+
 	// https://godotshaders.com/shader/dither-gradient-shader/
 	ivec2 pattern_size = textureSize(halftone_dither_pattern, 0);
 	vec2 screen_size = vec2(textureSize(tex, 0));
@@ -99,24 +99,24 @@ vec4 one_pass(vec2 tl_uv, vec2 tr_uv, vec2 bl_uv, vec2 br_uv, vec2 l_uv, sampler
 	vec2 m_pattern_uv = rotated(pattern_uv, magenta_pattern_rotation);
 	vec2 y_pattern_uv = rotated(pattern_uv, yellow_pattern_rotation);
 	vec2 k_pattern_uv = rotated(pattern_uv, black_pattern_rotation);
-	
+
 	float c_threshold = texture(halftone_dither_pattern, c_pattern_uv).r;
 	float m_threshold = texture(halftone_dither_pattern, m_pattern_uv).r;
 	float y_threshold = texture(halftone_dither_pattern, y_pattern_uv).r;
 	float k_threshold = texture(halftone_dither_pattern, k_pattern_uv).r;
-	
+
 	vec3 paper_base = paper_color.rgb;
-	
+
 	// Setting UVs outside of [0, 1] to paper color.
-	if (c > c_threshold && c_uv.x >= 0.0 && c_uv.x <= 1.0 && c_uv.y >= 0.0 && c_uv.y <= 1.0) 
+	if (c > c_threshold && c_uv.x >= 0.0 && c_uv.x <= 1.0 && c_uv.y >= 0.0 && c_uv.y <= 1.0)
 	{ paper_base = paper_base - ((paper_color.rgb - cyan_color.rgb)); }
-	if (m > m_threshold && m_uv.x >= 0.0 && m_uv.x <= 1.0 && m_uv.y >= 0.0 && m_uv.y <= 1.0) 
+	if (m > m_threshold && m_uv.x >= 0.0 && m_uv.x <= 1.0 && m_uv.y >= 0.0 && m_uv.y <= 1.0)
 	{ paper_base = paper_base - ((paper_color.rgb - magenta_color.rgb)); }
-	if (y > y_threshold  && y_uv.x >= 0.0 && y_uv.x <= 1.0 && y_uv.y >= 0.0 && y_uv.y <= 1.0) 
+	if (y > y_threshold  && y_uv.x >= 0.0 && y_uv.x <= 1.0 && y_uv.y >= 0.0 && y_uv.y <= 1.0)
 	{ paper_base = paper_base - ((paper_color.rgb - yellow_color.rgb)); }
-	if (k > k_threshold && k_uv.x >= 0.0 && k_uv.x <= 1.0 && k_uv.y >= 0.0 && k_uv.y <= 1.0) 
+	if (k > k_threshold && k_uv.x >= 0.0 && k_uv.x <= 1.0 && k_uv.y >= 0.0 && k_uv.y <= 1.0)
 	{ paper_base = paper_base - ((paper_color.rgb - black_color.rgb)); }
-	
+
 	return vec4(paper_base, a);
 }
 
@@ -139,10 +139,10 @@ void fragment() {
 		for (int y = 0; y < sqrt_samples; y++) {
 			float y_progress = float(y) / (float(sqrt_samples - 1));
 			sample_uv = vec2(x_progress, y_progress);
-			sample_color = sample_color + (one_pass(tl_s_uv, tr_s_uv, bl_s_uv, br_s_uv, sample_uv, SCREEN_TEXTURE) 
+			sample_color = sample_color + (one_pass(tl_s_uv, tr_s_uv, bl_s_uv, br_s_uv, sample_uv, SCREEN_TEXTURE)
 			/ float(samples));
 		}
 	}
-	
+
 	COLOR = sample_color;
 }

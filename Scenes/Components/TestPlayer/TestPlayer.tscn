@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dppgsdv33qh5"]
+[gd_scene load_steps=28 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
 [ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
@@ -9,18 +9,40 @@
 [ext_resource type="Texture2D" uid="uid://3ghxccaiyiqd" path="res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres" id="6_2or20"]
 [ext_resource type="Texture2D" uid="uid://8rvxnvgtouj2" path="res://Scenes/Components/Weapons/Shotgun.tres" id="6_ncyvl"]
 [ext_resource type="Texture2D" uid="uid://dgr1nblxv2hex" path="res://Scenes/Components/Weapons/Uzi.tres" id="7_qpg8o"]
-[ext_resource type="Texture2D" uid="uid://wj4aotcc44tr" path="res://Scenes/Components/Weapons/Pistol.tres" id="8_27udi"]
+[ext_resource type="Texture2D" uid="uid://cul1wjiko1vlj" path="res://Assets/Images/Sprites/Weapons.png" id="7_stadi"]
 [ext_resource type="Texture2D" uid="uid://d30xovlp0sbh5" path="res://Scenes/Components/TestPlayer/BodyParts/Head_Yellow.tres" id="10_76ito"]
 [ext_resource type="AudioStream" uid="uid://tnanimibi3qm" path="res://Assets/Audio/SFX/shield_damage.wav" id="11_8cd54"]
+[ext_resource type="Texture2D" uid="uid://bn2ljfmrrwhux" path="res://Scenes/Components/Weapons/Machinegun.tres" id="11_hotq8"]
 [ext_resource type="AudioStream" uid="uid://bb7qj3rrlpixy" path="res://Assets/Audio/SFX/shield_broken.wav" id="12_ipw16"]
+[ext_resource type="Texture2D" uid="uid://c1dajjy4dkany" path="res://Scenes/Components/Weapons/Sniper.tres" id="12_kgdua"]
 [ext_resource type="AudioStream" uid="uid://df5xq1mlb3qyh" path="res://Assets/Audio/SFX/health_damage.wav" id="13_6043p"]
+[ext_resource type="Texture2D" uid="uid://dnxxfegjbdm52" path="res://Scenes/Components/Weapons/Missile.tres" id="13_fif7l"]
 [ext_resource type="AudioStream" uid="uid://ctdb8bgv1kyiw" path="res://Assets/Audio/SFX/power-down.wav" id="14_2je56"]
+[ext_resource type="Texture2D" uid="uid://pj5mrjcip7ny" path="res://Scenes/Components/Weapons/RPG.tres" id="14_l3a1s"]
+[ext_resource type="Texture2D" uid="uid://b1biu2w8x0tn2" path="res://Scenes/Components/Weapons/Rocket.tres" id="15_i7gja"]
 [ext_resource type="PackedScene" uid="uid://dpk2a7bnjwrah" path="res://Scenes/Components/ArcBeam/ArcBeam.tscn" id="16_6ppro"]
+[ext_resource type="Texture2D" uid="uid://0fobti44i1dr" path="res://Scenes/Components/Weapons/Grenade.tres" id="16_efv0q"]
+[ext_resource type="Shader" path="res://Shaders/outline_shader.gdshader" id="17_0facm"]
+[ext_resource type="Texture2D" uid="uid://cxpy2y3fsg8h6" path="res://Assets/Images/Sprites/Laser.png" id="18_ix50i"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_p7thj"]
+atlas = ExtResource("7_stadi")
+region = Rect2(767.835, 587.702, 58.2413, 117.58)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4appq"]
+shader = ExtResource("17_0facm")
+shader_parameter/Smooth = true
+shader_parameter/on = true
+shader_parameter/width = 64.0
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/pixel_size = 6
+shader_parameter/width_speed = 0.0
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 scale = Vector2(0.5, 0.5)
+collision_mask = 15
 script = ExtResource("1_g7upe")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -55,6 +77,24 @@ position = Vector2(190, 20)
 [node name="Marker_Uzi" type="Marker2D" parent="BodyParts"]
 position = Vector2(190, 20)
 
+[node name="Marker_Machinegun" type="Marker2D" parent="BodyParts"]
+position = Vector2(200, 10)
+
+[node name="Marker_Sniper" type="Marker2D" parent="BodyParts"]
+position = Vector2(220, 15)
+
+[node name="Marker_Missile" type="Marker2D" parent="BodyParts"]
+position = Vector2(10, 30)
+
+[node name="Marker_RPG" type="Marker2D" parent="BodyParts"]
+position = Vector2(0, 15)
+
+[node name="Marker_Grenade" type="Marker2D" parent="BodyParts"]
+position = Vector2(166, 14)
+
+[node name="Marker_Laser" type="Marker2D" parent="BodyParts"]
+position = Vector2(200, 15)
+
 [node name="Backpack" type="Sprite2D" parent="BodyParts"]
 position = Vector2(-85, 0)
 rotation = -1.5708
@@ -80,6 +120,30 @@ metadata/position_locked = false
 
 [node name="Guns" type="Node2D" parent="BodyParts"]
 
+[node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(190, 20)
+rotation = -1.5708
+texture = SubResource("AtlasTexture_p7thj")
+metadata/gun_name = "Pistol"
+metadata/position_locked = false
+
+[node name="MuzzlePistol" type="Marker2D" parent="BodyParts/Guns/Pistol"]
+position = Vector2(-0.00012207, 58)
+rotation = 1.5708
+
+[node name="Uzi" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(190, 20)
+rotation = -1.5708
+texture = ExtResource("7_qpg8o")
+metadata/gun_name = "Uzi"
+metadata/position_locked = false
+
+[node name="MuzzleUzi" type="Marker2D" parent="BodyParts/Guns/Uzi"]
+position = Vector2(-0.000228882, -64)
+rotation = -1.5708
+
 [node name="Rifle" type="Sprite2D" parent="BodyParts/Guns"]
 visible = false
 position = Vector2(180, 20)
@@ -104,28 +168,75 @@ metadata/position_locked = false
 position = Vector2(-0.000650406, 180)
 rotation = 1.5708
 
-[node name="Uzi" type="Sprite2D" parent="BodyParts/Guns"]
+[node name="Machinegun" type="Sprite2D" parent="BodyParts/Guns"]
 visible = false
-position = Vector2(190, 20)
-rotation = 1.5708
-texture = ExtResource("7_qpg8o")
-metadata/gun_name = "Uzi"
-metadata/position_locked = false
-
-[node name="MuzzleUzi" type="Marker2D" parent="BodyParts/Guns/Uzi"]
-position = Vector2(-0.000228882, -64)
+position = Vector2(200, 10)
 rotation = -1.5708
+texture = ExtResource("11_hotq8")
+metadata/gun_name = "Machinegun"
 
-[node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
-position = Vector2(190, 20)
+[node name="MuzzleMachinegun" type="Marker2D" parent="BodyParts/Guns/Machinegun"]
+position = Vector2(-8.34465e-06, 190)
+
+[node name="Sniper" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(220, 15)
 rotation = -1.5708
-texture = ExtResource("8_27udi")
-metadata/gun_name = "Pistol"
-metadata/position_locked = false
+texture = ExtResource("12_kgdua")
+metadata/gun_name = "Sniper"
 
-[node name="MuzzlePistol" type="Marker2D" parent="BodyParts/Guns/Pistol"]
-position = Vector2(-0.00012207, 58)
+[node name="MuzzleSniper" type="Marker2D" parent="BodyParts/Guns/Sniper"]
+position = Vector2(0.99999, 236)
+
+[node name="Missile" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(10, 30)
+rotation = -1.5708
+texture = ExtResource("13_fif7l")
+metadata/gun_name = "Missile"
+
+[node name="MuzzleMissle" type="Marker2D" parent="BodyParts/Guns/Missile"]
+position = Vector2(5.99999, 292)
+
+[node name="RPG" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+position = Vector2(0, 15)
+rotation = -1.5708
+texture = ExtResource("14_l3a1s")
+metadata/gun_name = "RPG"
+
+[node name="Rocket" type="Sprite2D" parent="BodyParts/Guns/RPG"]
+position = Vector2(-1, 358)
+texture = ExtResource("15_i7gja")
+
+[node name="MuzzleRocket" type="Marker2D" parent="BodyParts/Guns/RPG"]
+position = Vector2(-1, 272)
+
+[node name="Laser" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
+material = SubResource("ShaderMaterial_4appq")
+position = Vector2(200, 15)
+rotation = -1.5708
+texture = ExtResource("18_ix50i")
+metadata/gun_name = "Laser"
+
+[node name="MuzzleLaser" type="Marker2D" parent="BodyParts/Guns/Laser"]
+position = Vector2(-1.00001, 234)
+
+[node name="ArcBeam" parent="BodyParts/Guns/Laser" instance=ExtResource("16_6ppro")]
+visible = false
+position = Vector2(-1, 234)
 rotation = 1.5708
+texture_color = Color(0, 0.984314, 3.36863, 1)
+line_width = 2000
+
+[node name="Grenade" type="Sprite2D" parent="BodyParts/Guns"]
+position = Vector2(166, 14)
+texture = ExtResource("16_efv0q")
+metadata/gun_name = "Grenade"
+
+[node name="MuzzleGrenade" type="Marker2D" parent="BodyParts/Guns/Grenade"]
+position = Vector2(76, 8)
 
 [node name="Head" type="Sprite2D" parent="BodyParts"]
 position = Vector2(10, 0)
@@ -148,8 +259,3 @@ max_polyphony = 3
 stream = ExtResource("14_2je56")
 
 [node name="PlayerAudioListener" type="AudioListener2D" parent="."]
-
-[node name="ArcBeam" parent="." instance=ExtResource("16_6ppro")]
-position = Vector2(250, 0)
-texture_color = Color(0, 0.984314, 3.36863, 1)
-line_width = 2000

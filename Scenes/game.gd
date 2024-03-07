@@ -41,6 +41,7 @@ func _input(event):
 		show_radar = !show_radar
 
 func _process(_delta: float) -> void:
+
 	pass
 
 func _draw():
