@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://be6gp0ug2w2wk"]
+
+[ext_resource type="Script" path="res://Scenes/game.gd" id="1_od7q6"]
+[ext_resource type="PackedScene" uid="uid://dppgsdv33qh5" path="res://Scenes/Components/TestPlayer/TestPlayer.tscn" id="2_78d53"]
+[ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="2_btvqd"]
+[ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="2_fixex"]
+[ext_resource type="PackedScene" uid="uid://ds2cinxxbq0xe" path="res://Scenes/Levels/World/World.tscn" id="2_gnwiy"]
+[ext_resource type="AudioStream" uid="uid://bknboaj2rcyw7" path="res://Assets/Audio/Music/Ludum Dare 30 - 02.ogg" id="6_lx6an"]
+[ext_resource type="Texture2D" uid="uid://chlhh72wkvnlp" path="res://Assets/Images/Textures/moon_light.png" id="7_8x2de"]
+
+[sub_resource type="Environment" id="Environment_pn7j4"]
+background_mode = 3
+tonemap_exposure = 0.9
+tonemap_white = 2.0
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+ssil_radius = 10.0
+ssil_intensity = 2.0
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.886275, 0.552941, 0.607843, 1)
+fog_light_energy = 2.0
+fog_density = 0.1
+fog_height = 1.0
+volumetric_fog_enabled = true
+volumetric_fog_albedo = Color(0.427451, 0.52549, 1, 1)
+adjustment_enabled = true
+adjustment_brightness = 0.85
+adjustment_contrast = 1.2
+adjustment_saturation = 1.2
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_od7q6")
+
+[node name="GUI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="GUI" instance=ExtResource("2_fixex")]
+visible = true
+
+[node name="World" parent="." instance=ExtResource("2_gnwiy")]
+
+[node name="Player" parent="." instance=ExtResource("2_78d53")]
+position = Vector2(2639, 76)
+
+[node name="WorldCamera" parent="." instance=ExtResource("2_btvqd")]
+position = Vector2(2608, 76)
+position_smoothing_enabled = true
+min_zoom = 10.0
+max_zoom = 0.1
+margin = Vector2(1000, 1000)
+
+[node name="DefaultListener" type="AudioListener2D" parent="."]
+current = true
+
+[node name="DefaultPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_lx6an")
+volume_db = -20.0
+autoplay = true
+max_distance = 5000.0
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 0.513726, 0.00784314, 1)
+energy = 0.5
+shadow_enabled = true
+texture = ExtResource("7_8x2de")
+texture_scale = 0.25
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pn7j4")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

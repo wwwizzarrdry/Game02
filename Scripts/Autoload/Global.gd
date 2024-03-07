@@ -4,6 +4,83 @@ extends Node
 # Access them anywhere with:
 # Global.variable_name
 
+var default_font: FontVariation = preload("res://Assets/Fonts/roboto.tres")
+
+func get_root():
+	var r = get_tree().get_root()
+	return r
+
+func get_root_viewport():
+	var r = get_root()
+	var vp = r.get_viewport()
+	return vp
+
+func get_root_viewport_size():
+	#var r = get_root()
+	var vp = get_tree().get_viewport()
+	var vs = vp.get_viewport_rect().size
+	return vs
+
+func get_damage_template() -> Dictionary:
+	return {"damage_type": "", "damage": 0}
+
+func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: float, mass: float):
+
+	var IDEAL_ROPE_DISTANCE = max_dist - 100.0 # adjust as needed
+	var ROPE_SPRING_CONSTANT = 100.0 # adjust as needed
+
+	var rope_vector = object.position - center_point
+	var rope_distance = rope_vector.length()
+	if rope_distance > IDEAL_ROPE_DISTANCE:
+		var rope_force = ROPE_SPRING_CONSTANT * (rope_distance - IDEAL_ROPE_DISTANCE)
+		object.velocity += rope_vector.normalized() * -rope_force * delta / mass
+
+	if object.is_in_group("player"):
+		var distance = object.position.distance_to(center_point)
+		var ratio_of_max_distance = distance/max_dist
+		get_tree().current_scene.draw_max_distance_perimeter(center_point, max_dist, ratio_of_max_distance)
+
+
+func print_dict(d, indent:int=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+
+	for key in d:
+		if typeof(d[key]) == TYPE_DICTIONARY:
+			print(spaces + str(key) + ":")
+			print_dict(d[key], indent + 1)
+		else:
+			print(spaces + str(key) + ": " + str(d[key]))
+
+func print_array(arr, indent=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+	for i in range(arr.size()):
+		var value = arr[i]
+		if value is Array:
+			print(spaces + "Array:")
+			print_array(value, indent + 1)
+		elif value is Dictionary:
+			print(spaces + "Dictionary:")
+			print_dict(value, indent + 1)
+		else:
+			print(spaces + str(i) + ": " + str(value))
+
+func print_object(obj, indent=0):
+	var spaces = "\t"
+	for i in indent: spaces = spaces + str("\t")
+	for property in obj.get_property_list():
+		var _name = property.name
+		var value = obj.get(_name)
+		print(spaces + str(_name) + ": " + str(value))
+
+func printobj(obj):
+	if !obj: return
+	if obj is Array: print_array(obj)
+	elif obj is Dictionary: print_dict(obj)
+	elif obj is Object: print_object(obj)
+	else: print(obj)
+
 func find_and_remove(array: Array, value) -> void:
 	var index = array.find(value)
 	if index != -1:

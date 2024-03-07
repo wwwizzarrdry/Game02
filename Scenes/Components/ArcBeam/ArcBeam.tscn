@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3 uid="uid://dpk2a7bnjwrah"]
+
+[ext_resource type="Script" path="res://Scenes/Components/ArcBeam/ArcBeam.gd" id="1_d54nk"]
+[ext_resource type="Shader" path="res://Scenes/Components/ArcBeam/ArcBeam.gdshader" id="2_t8ryj"]
+[ext_resource type="Texture2D" uid="uid://x0iewi4ptxe0" path="res://Assets/Images/Textures/particle_pack/rotated/spark_06_rotated.png" id="3_jd5d2"]
+[ext_resource type="Shader" path="res://Scenes/Components/ArcBeam/ArcBeamPoint.gdshader" id="4_r1rtu"]
+[ext_resource type="Texture2D" uid="uid://bmqy6iutrgr0l" path="res://Assets/Images/Textures/particle_pack/spark_01.png" id="5_lwskm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5pv3h"]
+shader = ExtResource("2_t8ryj")
+shader_parameter/color1 = Color(0.984375, 0, 0.0984374, 1)
+shader_parameter/color2 = Color(0.380392, 0.839216, 0.929412, 0.729412)
+shader_parameter/colorMixFactor = 1.0
+shader_parameter/glowFactor = 2.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3j2yv"]
+shader = ExtResource("4_r1rtu")
+
+[node name="ArcBeam" type="RayCast2D"]
+target_position = Vector2(1000, 0)
+collision_mask = 7
+script = ExtResource("1_d54nk")
+texture_color = Color(12, 2, 3, 1)
+
+[node name="ArcBeamLine" type="Line2D" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_5pv3h")
+points = PackedVector2Array(0, 0, 1000, 0)
+texture = ExtResource("3_jd5d2")
+texture_mode = 1
+
+[node name="Point" type="Node2D" parent="."]
+modulate = Color(0.38, 0.839, 0.929, 0.729)
+
+[node name="Texture" type="Sprite2D" parent="Point"]
+material = SubResource("ShaderMaterial_3j2yv")
+texture = ExtResource("5_lwskm")
+offset = Vector2(-128, 0)
+
+[node name="Texture2" type="Sprite2D" parent="Point"]
+material = SubResource("ShaderMaterial_3j2yv")
+position = Vector2(-128, 0)
+texture = ExtResource("5_lwskm")
+flip_v = true

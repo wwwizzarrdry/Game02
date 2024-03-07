@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://ca686gw68jany"]
+
+[ext_resource type="FontFile" uid="uid://cbch6i75hipw" path="res://Assets/Fonts/platinum_sign/Platinum Sign_Under.ttf" id="1_fyqp1"]
+
+[resource]
+base_font = ExtResource("1_fyqp1")
+opentype_features = {
+1667329140: 0
+}

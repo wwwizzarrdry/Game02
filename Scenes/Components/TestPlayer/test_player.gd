@@ -1,7 +1,25 @@
 extends CharacterBody2D
 
+@export var max_distance:float = 5000.0 : set = set_max_distance, get = get_max_distance
+func set_max_distance(val: float) -> void:
+	max_distance = val
+func get_max_distance() -> float:
+	return max_distance
+
+@export var health:float = 100.0 : set = set_health, get = get_health
+func set_health(val: float) -> void:
+	health = val
+func get_health() -> float:
+	return health
+
+@export var shield:float = 100.0 : set = set_shield, get = get_shield
+func set_shield(val: float) -> void:
+	shield = val
+func get_shield() -> float:
+	return shield
+
 @export_enum("Soldier", "Engineer", "Marksman") var character_class: int = 0
-@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 200
+@export_enum("Slow:100", "Average:200", "Very Fast:300") var character_speed: int = 500
 @export_enum("Rebecca", "Mary", "Leah") var character_name: String = "Rebecca"
 @export_enum("Pistol", "Uzi", "Rifle", "Shotgun") var character_gun: String = "Pistol"
 @export var player_skin: Dictionary = {
@@ -23,6 +41,8 @@ extends CharacterBody2D
 @onready var uzi: Sprite2D = $BodyParts/Guns/Uzi
 @onready var pistol: Sprite2D = $BodyParts/Guns/Pistol
 @onready var head: Sprite2D = $BodyParts/Head
+@onready var laser: RayCast2D = $Laser
+@onready var DAMAGE_NUMBER = preload("res://Scenes/Components/DamageNumber/DamageNumber.tscn")
 
 var outfits = {
 	"Shoulders": [preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Blue.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Forest_Digital.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Green.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Olive.tres"), preload("res://Scenes/Components/TestPlayer/BodyParts/Shoulders_Yellow.tres")],
@@ -33,18 +53,33 @@ var outfits = {
 }
 
 var rotate_speed: float = 10.0
-var speed = character_speed # increasing speed, also decreases traction
+var speed: float = character_speed * 1.2  # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
 var friction: float = acceleration / speed
 var deadzoneThreshold: float = 0.2
 var deadzoneADSThreshold: float = 0.1
 var is_aiming = false
+var can_shoot = true
+var is_shooting = false
+
+var max_health: float = 100.0
+var max_shield: float = 100.0
 
 var all_parts = []
 var all_guns = []
 var current_gun = 0
 
+
+
 func _ready() -> void:
+
+	Signals.player_entered_pit.connect(_on_player_entered_pit)
+	Signals.player_exited_pit.connect(_on_player_exited_pit)
+	Signals.player_entered_pit_danger_area.connect(_on_danger_area_entered)
+	Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
+	Signals.player_entered_ring.connect(_on_player_entered_ring)
+	Signals.player_exited_ring.connect(_on_player_exited_ring)
+
 
 	backpack.texture = player_skin["backpack"]
 	shoulders.texture = player_skin["shoulders"]
@@ -66,19 +101,27 @@ func _ready() -> void:
 			gun.visible = true
 		i += 1
 
+
+
+# Subtle lean forward while aiming
 var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+
+	Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
+
+	shoot()
 
 	if is_aiming:
+
 		targetYOffset = 8.0
-		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
-		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset + 8, lerpSpeed)
-		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset + 8, lerpSpeed)
-		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset + 8, lerpSpeed)
-		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset + 8, lerpSpeed)
-		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset + 8, lerpSpeed)
-		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset + 8, lerpSpeed)
+		head.offset.y      = lerp(head.offset.y, targetYOffset + 8, lerpSpeed)
+		arm_right.offset.y = lerp(arm_right.offset.y, targetYOffset, lerpSpeed)
+		arm_left.offset.y  = lerp(arm_left.offset.y, targetYOffset, lerpSpeed)
+		rifle.offset.y     = lerp(rifle.offset.y, targetYOffset, lerpSpeed)
+		shotgun.offset.y   = lerp(shotgun.offset.y, targetYOffset, lerpSpeed)
+		uzi.offset.y       = lerp(uzi.offset.y, targetYOffset, lerpSpeed)
+		pistol.offset.y    = lerp(pistol.offset.y, targetYOffset, lerpSpeed)
 	else:
 		targetYOffset = 0.0
 		head.offset.y      = lerp(head.offset.y, targetYOffset, lerpSpeed)
@@ -106,6 +149,12 @@ func get_input(_delta):
 	if Input.is_action_just_released("aim"):
 		show_laser(false)
 
+	#  Shoot
+	if Input.is_action_pressed('shoot'):
+		is_shooting = true
+	else:
+		is_shooting = false
+
 	# Chane Weapon
 	if Input.is_action_just_pressed('change_weapon'):
 		change_weapons()
@@ -114,11 +163,12 @@ func get_input(_delta):
 	if Input.is_action_just_pressed('inv_right'):
 		random_outfit()
 
+
 func set_move_direction(delta: float) -> void:
 
 	var move_speed = speed
 	if is_aiming:
-		move_speed = speed / 2
+		move_speed = speed / 2.0
 
 	friction = acceleration / move_speed
 	apply_traction(delta)
@@ -152,14 +202,18 @@ func apply_traction(delta: float) -> void:
 func apply_friction(delta: float) -> void:
 	velocity -= velocity * friction * delta
 
+
+
 func toggle_sprint() -> void:
-	if speed >= 500:
-		set_move_speed(200)
-	else:
+	if speed >= 800:
 		set_move_speed(500)
+	else:
+		set_move_speed(800)
 
 func set_move_speed(s) -> void:
 	speed = s
+
+
 
 func change_weapons() -> void:
 	var next_gun = wrap(current_gun + 1, 0, all_guns.size())
@@ -168,12 +222,35 @@ func change_weapons() -> void:
 		all_guns[i].visible = false
 		if i == next_gun:
 			all_guns[i].visible = true
+			laser.global_position = all_guns[i].get_child(0).global_position
 	current_gun = next_gun
+
 	pass
 
 func show_laser(val) -> void:
 	is_aiming = val
-	$BodyParts/Laser.visible = is_aiming
+	laser.global_position = all_guns[current_gun].get_child(0).global_position
+	laser.enabled = is_aiming
+	laser.visible = is_aiming
+
+var arc_beam_pause = false
+func shoot() -> void:
+	if can_shoot and is_shooting:
+		$ArcBeam.global_position = all_guns[current_gun].get_child(0).global_position
+		$ArcBeam.enabled = true
+		$ArcBeam.visible = true
+		if $ArcBeam.is_colliding() and !arc_beam_pause:
+			arc_beam_pause = true
+			var dmg_lbl= DAMAGE_NUMBER.instantiate()
+			get_parent().add_child(dmg_lbl)
+			dmg_lbl.global_position = $ArcBeam.get_collision_point()
+			dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
+			await Global.timeout(0.1)
+			arc_beam_pause = false
+	else:
+		$ArcBeam.enabled = false
+		$ArcBeam.visible = false
+		arc_beam_pause = false
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
@@ -185,3 +262,110 @@ func random_outfit():
 	arm_right.texture = outfits.Arm_Right[r]
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
+
+
+func take_damage(data):
+	print(name + " took " + data.damage_type + " damage for " + str(data.damage) + "HP!")
+	var damage = data.damage
+	var current_shield = get_shield()
+	var current_health = get_health()
+	var remaining_damage = clamp(damage - current_shield, 0.0, damage)
+
+
+	if current_shield > 0:
+		var dmg_lbl1 = DAMAGE_NUMBER.instantiate()
+		get_parent().add_child(dmg_lbl1)
+		dmg_lbl1.global_position = self.global_position
+
+		if remaining_damage == 0:
+			dmg_lbl1.set_label(str(round(clamp(damage, 0.0, max_shield))), Color(0.169, 0.757, 1))
+		else:
+			dmg_lbl1.set_label(str(round(clamp(current_shield - damage, 0.0, max_shield))), Color(0.169, 0.757, 1))
+
+		play_audio("player_shield_damaged")
+		set_shield(clamp(current_shield - damage, 0.0, max_shield))
+		current_shield = get_shield()
+
+		if current_shield == 0:
+			play_audio("player_shield_broken")
+
+	if current_health > 0:
+		if remaining_damage > 0:
+			var dmg_lbl2 = DAMAGE_NUMBER.instantiate()
+			get_parent().add_child(dmg_lbl2)
+			dmg_lbl2.global_position = self.global_position
+			dmg_lbl2.set_label(str(round(remaining_damage)), Color(1, 0.251, 0.169, 1))
+
+			play_audio("player_health_damaged")
+			set_health(clamp(current_health - remaining_damage, 0.0, max_health))
+			current_health = get_health()
+
+	if current_health == 0:
+		play_audio("player_death")
+		Signals.player_died.emit(self)
+		on_player_died(self)
+
+
+	print("Shield: ", current_shield)
+	print("Health: ", current_health)
+
+
+func play_audio(val: String) -> void:
+	match val:
+		"player_shield_damaged":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldDamaged})
+		"player_shield_broken":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerShieldBroken})
+		"player_health_damaged":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerHealthDamaged})
+		"player_death":
+			Audio.queue({"listener": $PlayerAudioListener, "device": $PlayerDeath})
+		_:
+			return
+
+# Ring Entered (Safety)
+func _on_player_entered_ring(body) -> void:
+	# Update player to out-of-danger state
+	if body == self:
+		modulate = Color(1, 1, 1)
+	pass
+
+# Ring Exited (Hazard)
+func _on_player_exited_ring(body) -> void:
+	# Update player to in-danger state
+	if body == self:
+		modulate = Color(1, 0, 0)
+	pass
+
+# Pit Danger Area Entered
+func _on_danger_area_entered(body) -> void:
+	if body == self:
+		# Update player to in-danger state
+		modulate = Color(1, 0, 0)
+
+# Pit Danger Area Exited
+func _on_danger_area_exited(body) -> void:
+	if body == self:
+		print("Player is out of danger!")
+		# Update player to out-of-danger state
+		modulate = Color(1, 1, 1)
+		set_health(100)
+		set_shield(100)
+
+# Pit Entered
+func _on_player_entered_pit(body) -> void:
+	if body == self:
+		print(body.name + " in the pit!!!")
+
+# Pit Exited
+func _on_player_exited_pit(body) -> void:
+	if body == self:
+		print(body.name + " escaped the pit!")
+		show()
+
+func on_player_died(body):
+	if body == self:
+		print(body.name + " died")
+		# World camera needs to update its targets before freeing player
+		#queue_free()
+		hide()

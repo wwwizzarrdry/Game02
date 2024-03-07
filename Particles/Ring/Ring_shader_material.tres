@@ -1,0 +1,40 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://ddh5c5xi8q1ma"]
+
+[ext_resource type="Shader" path="res://Particles/Ring/Ring.gdshader" id="1_7652j"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1xp7k"]
+metadata/_preview_in_3d_space_ = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0ay10"]
+seamless = true
+noise = SubResource("FastNoiseLite_1xp7k")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_u48yb"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_15jo2"]
+seamless = true
+noise = SubResource("FastNoiseLite_u48yb")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0y3ks"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gcun1"]
+seamless = true
+noise = SubResource("FastNoiseLite_0y3ks")
+
+[resource]
+shader = ExtResource("1_7652j")
+shader_parameter/scroll1 = Vector2(1, 0.4)
+shader_parameter/scroll2 = Vector2(0.2, 1.4)
+shader_parameter/speed = 0.05
+shader_parameter/xStretch = 1.0
+shader_parameter/yStretch = 0.1
+shader_parameter/laserSize = 0.779
+shader_parameter/wobbliness = 0.7
+shader_parameter/color1 = Color(0.372549, 0, 0, 1)
+shader_parameter/color2 = Color(1, 0, 0, 1)
+shader_parameter/colorMixFactor = 1.5
+shader_parameter/glowFactor = 2.5
+shader_parameter/minAlpha = 0.5
+shader_parameter/NOISE_PATTERN1 = SubResource("NoiseTexture2D_0ay10")
+shader_parameter/NOISE_PATTERN2 = SubResource("NoiseTexture2D_15jo2")
+shader_parameter/TRANSPARENCY_VARIATION = SubResource("NoiseTexture2D_gcun1")

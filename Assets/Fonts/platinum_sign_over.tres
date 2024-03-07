@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://hoh1ti2640ux"]
+
+[ext_resource type="FontFile" uid="uid://d01d6ucoeax7x" path="res://Assets/Fonts/platinum_sign/Platinum_Sign_Over.ttf" id="1_wqfvv"]
+
+[resource]
+base_font = ExtResource("1_wqfvv")
+opentype_features = {
+1667329140: 0
+}
