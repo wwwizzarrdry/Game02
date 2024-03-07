@@ -10,7 +10,6 @@ amount = 100
 process_material = ExtResource("2_kierw")
 texture = ExtResource("3_ddje1")
 lifetime = 3.0
-preprocess = 1.0
 speed_scale = 1.5
 randomness = 0.1
 visibility_rect = Rect2(-200, -200, 400, 400)

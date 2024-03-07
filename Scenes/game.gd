@@ -149,8 +149,8 @@ func draw_cam_rect(r):
 
 func _on_timer_timeout() -> void:
 	var radius = $Player.max_distance
-	if radius > 0:
-		radius = radius - 10.0
+	if radius > 100:
+		radius = radius - 2.0
 	else:
 		radius = 5000.0
 

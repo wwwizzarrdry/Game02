@@ -8,19 +8,16 @@ const magic = preload("res://Particles/Magic.tscn")
 @onready var pit_danger_area: Area2D = $WorldOffset/PitTrap/Danger
 @onready var pit_area: Area2D = $WorldOffset/PitTrap/Pit
 @onready var void_monster: CharacterBody2D = $WorldOffset/VoidMonster
+@onready var vignette: Sprite2D = $Vignette
 
+var center_offset = Vector2(64, 64)
 var default_radius: float = 5000.0
 var ring_radius: float = 5000.0
 var bodies_outside_ring: Array = []
+var particle_container: Array = []
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready() -> void:
-
-	#Signals.player_entered_pit.connect(_on_body_entered_pit)
-	#Signals.player_exited_pit.connect(_on_body_exited_pit)
-	#Signals.player_entered_pit_danger_area.connect(_on_danger_area_entered)
-	#Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
-
 	self.z_index = -1
 	generate_tiles()
 	set_new_radius(ring_radius)
@@ -81,48 +78,53 @@ func generate_tiles() -> void:
 
 # Ring ---------------------------------------
 func set_new_radius(val: float):
-	ring_radius = clamp(val, 0, default_radius) # subtract a buffer zone
 
-	#exiting this area deals ring damage
-	var ring_detection_radius: float = clamp(ring_radius - 150.0, 0.0, default_radius) # subtract a buffer zone
+	# True radius
+	ring_radius = clamp(val, 0, default_radius)
+
+	# Defines the edge of the ring.
+	# Exiting thid area triggers ring damage
+	var ring_detection_radius: float = clamp(ring_radius - 256.0, 1.0, default_radius) # subtract a buffer zone
 	ring_edge.shape.radius = ring_detection_radius
 	update_particle_ring(val)
 
+	# Darkens the screen more intensley as the ring closes
+	set_vignette_intensity(ring_radius, default_radius)
+
 func draw_particle_ring(radius):
 	# Number of points in the circle
-	var points_count = 360
-	var points = PackedVector2Array()
+	var points_count = 180
+
 	for i in range(points_count):
 		var angle = i * 2.0 * PI / points_count
-		var point = Vector2(cos(angle), sin(angle)) * radius
-		points.append(point)
+		var point = Vector2(cos(angle), sin(angle)) * radius + center_offset
 
 		# Add particles to the emission points
-		var particles = magic.instantiate()
-		particles.position = points[i]
-		particles.add_to_group("magic")
-		add_child(particles)
-		particles.set_emitting(true)
-	points.append(points[0])
-
-	var particles1 = magic.instantiate()
-	particles1.position = points[0]
-	particles1.add_to_group("magic")
-	add_child(particles1)
-	particles1.set_emitting(true)
+		var particle = magic.instantiate()
+		particle.position = point
+		particle.add_to_group("magic")
+		particle.set_emitting(true)
+		add_child(particle)
+		particle_container.append(particle)
 
 func update_particle_ring(radius):
-	ring_radius = radius - (0.03 * radius)
+
+	ring_radius = radius - 128
 	radius = ring_radius
+
 	# Number of points in the circle
-	var particles = get_tree().get_nodes_in_group("magic")
+	var particles = particle_container #get_tree().get_nodes_in_group("magic")
 	var points_count: int = particles.size()
 	for i in range(0, points_count):
 		var angle = i * 2.0 * PI / points_count
-		var point = Vector2(cos(angle), sin(angle)) * radius
+		var point = Vector2(cos(angle), sin(angle)) * radius + center_offset
 		if particles.size() > i:
 			particles[i].position = point
 			set_particle_gravity(particles[i])
+
+func delete_all_particles() -> void:
+	for p in particle_container:
+		p.queue_free()
 
 func set_particle_gravity(particle):
 	# Assuming the center of the circle is at (center_x, center_y)
@@ -138,13 +140,32 @@ func set_particle_gravity(particle):
 	var unit_dir = dir.normalized()
 
 	# Multiply the unit vector by the desired strength of gravity
-	var gravity_strength = 20
+	var gravity_strength = 100
+
 	var gravity = unit_dir * gravity_strength
 	# Now, gravity.x and gravity.y are the x and y gravity values
 	particle.process_material.gravity.x = gravity.x
 	particle.process_material.gravity.y = gravity.y
 
-# Scale Pit Monster bases onclosest player distance
+func set_vignette_intensity(current_radius, original_radius) -> void:
+	# Calculate the ratio of the current radius to the original radius
+	var ratio = current_radius / original_radius
+
+	# Normalize the ratio to get a value between 0 and 1
+	var normalized_ratio = clamp(ratio, 0, 1)
+
+	# Invert the normalized ratio so that the intensity increases as the circle shrinks
+	var inverted_ratio = 1 - normalized_ratio
+
+	# Scale the inverted ratio to get an intensity between 0 and 10
+	var vignette_intensity = inverted_ratio * 10
+	var vignette_opacity = inverted_ratio * 2.0
+
+	vignette.material.set_shader_parameter("vignette_intensity", vignette_intensity)
+	vignette.material.set_shader_parameter("vignette_opacity", vignette_opacity)
+	pass
+
+# Scale Pit Monster based on closest player distance
 func scale_to_closest_player(from_node: CharacterBody2D, delta: float):
 	var target: Array = get_closest_player(from_node)
 	if target[0] == null:
@@ -215,25 +236,18 @@ func get_closest_player(node_A) -> Array:
 	return [closest_node, closest_distance]
 
 
-# Pit Danger Area ----------------------------
-func _on_danger_area_entered(body) -> void:
+# Pit Danger Zone ----------------------------
+func _on_danger_body_entered(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_entered_pit_danger_area.emit(body)
 
-func _on_danger_area_exited(body) -> void:
+func _on_danger_body_exited(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_exited_pit_danger_area.emit(body)
 
 
-# Pit Danger Zone ----------------------------
-func _on_danger_body_entered(body) -> void:
-	_on_danger_area_entered(body)
-
-func _on_danger_body_exited(body) -> void:
-	_on_danger_area_exited(body)
-
-# Pit Collision ------------------------------
-func _on_body_entered_pit(body) -> void:
+# Pit Kill Zone -------------------------------------
+func _on_pit_body_entered(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_entered_pit.emit(body)
 		if body.has_method("take_damage"):
@@ -242,34 +256,32 @@ func _on_body_entered_pit(body) -> void:
 			damage_template.damage = 50.0
 			body.take_damage(damage_template)
 
-func _on_body_exited_pit(body) -> void:
+func _on_pit_body_exited(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_exited_pit.emit(body)
-
-#Kill Zone -------------------------------------
-func _on_pit_body_entered(body) -> void:
-	_on_body_entered_pit(body)
-
-func _on_pit_body_exited(body) -> void:
-	_on_body_exited_pit(body)
 
 
 # Ring Entered (Safety)
 func _on_ring_body_entered(body: Node2D) -> void:
-	# When Player enters the ring collision area, they have exited the ring of fire!
+	# When Player enters the ring collision area, they have *exited* the ring of fire!
+	if body.is_in_group("player"):
+		Signals.player_entered_ring.emit(body)
+
 	bodies_outside_ring.erase(body)
-	print(body.name, " OUT of the fire.")
 	if bodies_outside_ring.size() == 0:
 		ring_dot_timer.stop()
 
 # Ring Exited (Hazard)
 func _on_ring_body_exited(body: Node2D) -> void:
 	# When PLayer exits the ring collision area, they have entered the ring of fire!
+	if body.is_in_group("player"):
+		Signals.player_exited_ring.emit(body)
+
 	bodies_outside_ring.append(body)
-	print(body.name, " IN of the fire!")
 	if ring_dot_timer.is_stopped():
 		ring_dot_timer.start()
 
+# Ring Damage
 func _on_ring_dot_timer_timeout() -> void:
 	# Maybe emit take_damage(ring_damage) to all bodies outside of ring?
 	if bodies_outside_ring.size() > 0:
@@ -280,7 +292,6 @@ func apply_ring_damage():
 	var ring_damage = 10 + (default_radius/clamp(ring_radius, 1, default_radius))
 	for b in bodies_outside_ring:
 		if b.has_method("take_damage"):
-			print("Apply Ring Dmg: ", ring_damage)
 			var damage_template = Global.get_damage_template()
 			damage_template.damage_type = "ring"
 			damage_template.damage = ring_damage

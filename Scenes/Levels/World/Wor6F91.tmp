@@ -1,12 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://ds2cinxxbq0xe"]
+[gd_scene load_steps=10 format=3 uid="uid://ds2cinxxbq0xe"]
 
 [ext_resource type="Script" path="res://Scenes/Levels/World/world.gd" id="1_60onx"]
 [ext_resource type="TileSet" uid="uid://dm83apox5bxft" path="res://Scenes/Levels/Tileset_128x128.tres" id="1_jlj6o"]
 [ext_resource type="Texture2D" uid="uid://ek4g8hogdodl" path="res://Assets/Images/Backgrounds/pit_trap.jpg" id="2_bxd32"]
 [ext_resource type="Texture2D" uid="uid://bfy1smbtvcwwl" path="res://Assets/Images/Tilesets/barricade.png" id="3_f56xd"]
 [ext_resource type="Texture2D" uid="uid://ca3yx2lwap5q7" path="res://Assets/Images/Sprites/AI Sprites/Void-Monster.png" id="5_70c7y"]
-[ext_resource type="Shader" path="res://Shaders/post_processing/vignette_postprocess.gdshader" id="6_nd0lw"]
-[ext_resource type="Texture2D" uid="uid://bxcha3ff4p6rk" path="res://Assets/Images/Textures/circle.png" id="7_nqgoy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nxgyk"]
 size = Vector2(1181, 1180)
@@ -19,12 +17,6 @@ radius = 1828.15
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f7ajj"]
 radius = 180.011
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_yn87a"]
-shader = ExtResource("6_nd0lw")
-shader_parameter/vignette_intensity = 1.0
-shader_parameter/vignette_opacity = 0.5
-shader_parameter/vignette_rgb = Color(0.988235, 0.164706, 0.301961, 1)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_60onx")
@@ -85,12 +77,6 @@ position = Vector2(201, 7)
 target_position = Vector2(610, 1)
 
 [node name="RingDotTimer" type="Timer" parent="WorldOffset"]
-
-[node name="Vignette" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_yn87a")
-position = Vector2(86.0001, 18.4996)
-scale = Vector2(135.66, 135.57)
-texture = ExtResource("7_nqgoy")
 
 [connection signal="body_entered" from="WorldOffset/PitTrap/Pit" to="." method="_on_pit_body_entered"]
 [connection signal="body_exited" from="WorldOffset/PitTrap/Pit" to="." method="_on_pit_body_exited"]

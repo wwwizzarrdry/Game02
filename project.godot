@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-SignalBus="*res://Scripts/Autoload/SignalBus.gd"
+SignalBus="res://Scripts/Autoload/SignalBus.gd"
 Signals="*res://Scripts/Autoload/Signals.gd"
 PlayerData="*res://Scripts/Autoload/PlayerData.gd"
 Global="*res://Scripts/Autoload/Global.gd"

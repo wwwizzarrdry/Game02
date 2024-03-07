@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bk7dvd8cnwvjy"]
+[gd_scene load_steps=9 format=3 uid="uid://bk7dvd8cnwvjy"]
 
 [ext_resource type="Script" path="res://Scenes/Components/DamageNumber/DamageNumber.gd" id="1_rimgp"]
-[ext_resource type="FontFile" uid="uid://u1s7q16yfdno" path="res://Assets/Fonts/roboto/Roboto-Regular.ttf" id="2_nx3bn"]
+[ext_resource type="FontFile" uid="uid://cbch6i75hipw" path="res://Assets/Fonts/platinum_sign/Platinum Sign_Under.ttf" id="2_fboim"]
+[ext_resource type="FontFile" uid="uid://d01d6ucoeax7x" path="res://Assets/Fonts/platinum_sign/Platinum_Sign_Over.ttf" id="3_xlg77"]
 
 [sub_resource type="Animation" id="Animation_bwdyn"]
 resource_name = "Damage_Number_Anim"
@@ -55,7 +56,7 @@ tracks/3/keys = {
 }
 tracks/4/type = "bezier"
 tracks/4/imported = false
-tracks/4/enabled = true
+tracks/4/enabled = false
 tracks/4/path = NodePath("LabelContainer:position:x")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
@@ -96,10 +97,22 @@ _data = {
 "RESET": SubResource("Animation_krps3")
 }
 
-[sub_resource type="LabelSettings" id="LabelSettings_abn22"]
-font = ExtResource("2_nx3bn")
-font_size = 82
-outline_size = 22
+[sub_resource type="LabelSettings" id="LabelSettings_pjdak"]
+resource_local_to_scene = true
+line_spacing = 0.0
+font = ExtResource("2_fboim")
+font_size = 64
+font_color = Color(0, 0, 0, 1)
+outline_color = Color(1, 1, 1, 0)
+shadow_size = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_ofstk"]
+resource_local_to_scene = true
+line_spacing = 0.0
+font = ExtResource("3_xlg77")
+font_size = 62
+outline_color = Color(1, 1, 1, 0)
+shadow_size = 0
 
 [node name="DamageNumber" type="Node2D"]
 script = ExtResource("1_rimgp")
@@ -119,15 +132,30 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.5
-offset_top = -75.5
-offset_right = 150.5
-offset_bottom = 75.5
+offset_left = -152.0
+offset_top = -76.0
+offset_right = 149.0
+offset_bottom = 75.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
-text = "123"
-label_settings = SubResource("LabelSettings_abn22")
-horizontal_alignment = 1
-vertical_alignment = 1
-text_overrun_behavior = 3
+text = "56"
+label_settings = SubResource("LabelSettings_pjdak")
+uppercase = true
+
+[node name="Label2" type="Label" parent="LabelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -152.0
+offset_top = -76.0
+offset_right = 149.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "56"
+label_settings = SubResource("LabelSettings_ofstk")
+uppercase = true

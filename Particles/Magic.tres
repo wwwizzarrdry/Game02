@@ -1,4 +1,4 @@
-[gd_resource type="ParticleProcessMaterial" load_steps=13 format=3 uid="uid://dw220mvxwfhw3"]
+[gd_resource type="ParticleProcessMaterial" load_steps=11 format=3 uid="uid://dw220mvxwfhw3"]
 
 [sub_resource type="Curve" id="Curve_yo5wq"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.623377, 0.923077), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -25,15 +25,6 @@ point_count = 3
 [sub_resource type="CurveTexture" id="CurveTexture_jhdeq"]
 curve = SubResource("Curve_17lmn")
 
-[sub_resource type="Curve" id="Curve_oe3nl"]
-min_value = -2.0
-max_value = 2.0
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_gdo48"]
-curve = SubResource("Curve_oe3nl")
-
 [sub_resource type="Curve" id="Curve_pmnyg"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.506494, 0.78022), 0.0, 0.0, 0, 0, Vector2(0.863636, 0.142857), 0.0, 0.0, 0, 0, Vector2(0.967532, 0.0659341), 0.0, 0.0, 0, 0]
 point_count = 4
@@ -42,23 +33,22 @@ point_count = 4
 curve = SubResource("Curve_pmnyg")
 
 [resource]
+resource_local_to_scene = true
+lifetime_randomness = 0.1
 emission_shape = 6
 emission_ring_axis = Vector3(0, 0, 1)
 emission_ring_height = 10.0
 emission_ring_radius = 7.0
 emission_ring_inner_radius = 3.0
 angle_max = 360.0
-inherit_velocity_ratio = 500.0
+direction = Vector3(0, 0, 0)
 spread = 180.0
 initial_velocity_min = 50.0
 initial_velocity_max = 100.0
-orbit_velocity_min = -0.1
-orbit_velocity_max = 0.1
-orbit_velocity_curve = SubResource("CurveTexture_gdo48")
+radial_velocity_max = 20.0
 gravity = Vector3(0, 0, 0)
-linear_accel_max = 50.0
-radial_accel_max = 50.0
-tangential_accel_max = 50.0
+damping_min = 1.0
+damping_max = 1.0
 scale_max = 5.0
 scale_curve = SubResource("CurveTexture_iyq0l")
 color = Color(1, 0.360784, 0.176471, 1)

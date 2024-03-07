@@ -53,7 +53,7 @@ var outfits = {
 }
 
 var rotate_speed: float = 10.0
-var speed: float = character_speed * 1.0  # increasing speed, also decreases traction
+var speed: float = character_speed * 1.2  # increasing speed, also decreases traction
 var acceleration: float = 2000 # higher = more traction
 var friction: float = acceleration / speed
 var deadzoneThreshold: float = 0.2
@@ -69,11 +69,17 @@ var all_parts = []
 var all_guns = []
 var current_gun = 0
 
+
+
 func _ready() -> void:
+
 	Signals.player_entered_pit.connect(_on_player_entered_pit)
 	Signals.player_exited_pit.connect(_on_player_exited_pit)
 	Signals.player_entered_pit_danger_area.connect(_on_danger_area_entered)
 	Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
+	Signals.player_entered_ring.connect(_on_player_entered_ring)
+	Signals.player_exited_ring.connect(_on_player_exited_ring)
+
 
 	backpack.texture = player_skin["backpack"]
 	shoulders.texture = player_skin["shoulders"]
@@ -94,6 +100,8 @@ func _ready() -> void:
 			current_gun = i
 			gun.visible = true
 		i += 1
+
+
 
 # Subtle lean forward while aiming
 var targetYOffset: float = 100.0  # Set your desired target Y offset
@@ -225,18 +233,24 @@ func show_laser(val) -> void:
 	laser.enabled = is_aiming
 	laser.visible = is_aiming
 
+var arc_beam_pause = false
 func shoot() -> void:
 	if can_shoot and is_shooting:
-		print($ArcBeam.is_colliding())
 		$ArcBeam.global_position = all_guns[current_gun].get_child(0).global_position
+		$ArcBeam.enabled = true
 		$ArcBeam.visible = true
-		if $ArcBeam.is_colliding():
+		if $ArcBeam.is_colliding() and !arc_beam_pause:
+			arc_beam_pause = true
 			var dmg_lbl= DAMAGE_NUMBER.instantiate()
 			get_parent().add_child(dmg_lbl)
 			dmg_lbl.global_position = $ArcBeam.get_collision_point()
 			dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
+			await Global.timeout(0.1)
+			arc_beam_pause = false
 	else:
+		$ArcBeam.enabled = false
 		$ArcBeam.visible = false
+		arc_beam_pause = false
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
@@ -248,6 +262,7 @@ func random_outfit():
 	arm_right.texture = outfits.Arm_Right[r]
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
+
 
 func take_damage(data):
 	print(name + " took " + data.damage_type + " damage for " + str(data.damage) + "HP!")
@@ -295,8 +310,6 @@ func take_damage(data):
 	print("Health: ", current_health)
 
 
-
-
 func play_audio(val: String) -> void:
 	match val:
 		"player_shield_damaged":
@@ -310,12 +323,27 @@ func play_audio(val: String) -> void:
 		_:
 			return
 
+# Ring Entered (Safety)
+func _on_player_entered_ring(body) -> void:
+	# Update player to out-of-danger state
+	if body == self:
+		modulate = Color(1, 1, 1)
+	pass
+
+# Ring Exited (Hazard)
+func _on_player_exited_ring(body) -> void:
+	# Update player to in-danger state
+	if body == self:
+		modulate = Color(1, 0, 0)
+	pass
+
+# Pit Danger Area Entered
 func _on_danger_area_entered(body) -> void:
 	if body == self:
-		print("Player is in danger!")
 		# Update player to in-danger state
 		modulate = Color(1, 0, 0)
 
+# Pit Danger Area Exited
 func _on_danger_area_exited(body) -> void:
 	if body == self:
 		print("Player is out of danger!")
@@ -324,15 +352,20 @@ func _on_danger_area_exited(body) -> void:
 		set_health(100)
 		set_shield(100)
 
+# Pit Entered
 func _on_player_entered_pit(body) -> void:
-	print(body.name + " in the pit!!!")
+	if body == self:
+		print(body.name + " in the pit!!!")
 
+# Pit Exited
 func _on_player_exited_pit(body) -> void:
-	print(body.name + " escaped the pit!")
-	show()
+	if body == self:
+		print(body.name + " escaped the pit!")
+		show()
 
 func on_player_died(body):
-	print(body.name + " died")
-	# World camera needs to update its targets before freeing player
-	#queue_free()
-	hide()
+	if body == self:
+		print(body.name + " died")
+		# World camera needs to update its targets before freeing player
+		#queue_free()
+		hide()
