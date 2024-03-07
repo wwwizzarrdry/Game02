@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://dy3hh2rap2nf0"]
+
+[ext_resource type="Texture2D" uid="uid://ca3yx2lwap5q7" path="res://Assets/Images/Sprites/AI Sprites/Void-Monster.png" id="1_1n31s"]
+[ext_resource type="Script" path="res://Scenes/Components/Enemies/VoidMonster/void_monster.gd" id="1_4jwnr"]
+[ext_resource type="AudioStream" uid="uid://tnanimibi3qm" path="res://Assets/Audio/SFX/shield_damage.wav" id="3_8ycmq"]
+[ext_resource type="AudioStream" uid="uid://bb7qj3rrlpixy" path="res://Assets/Audio/SFX/shield_broken.wav" id="4_ovc55"]
+[ext_resource type="AudioStream" uid="uid://df5xq1mlb3qyh" path="res://Assets/Audio/SFX/health_damage.wav" id="5_gkhl0"]
+[ext_resource type="AudioStream" uid="uid://ctdb8bgv1kyiw" path="res://Assets/Audio/SFX/power-down.wav" id="6_n3uwg"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f7ajj"]
+radius = 188.597
+
+[node name="VoidMonster" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_4jwnr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_1n31s")
+offset = Vector2(-7, 0)
+
+[node name="Front" type="Marker2D" parent="Sprite2D"]
+position = Vector2(200, 7)
+
+[node name="RayCast2D" type="RayCast2D" parent="Sprite2D"]
+target_position = Vector2(1000, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_f7ajj")
+debug_color = Color(0.952941, 0.133333, 0.443137, 0.419608)
+
+[node name="ShieldDamaged" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_8ycmq")
+max_polyphony = 3
+
+[node name="ShieldBroken" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_ovc55")
+
+[node name="HealthDamaged" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_gkhl0")
+max_polyphony = 3
+
+[node name="Death" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_n3uwg")
+
+[node name="AudioListener" type="AudioListener2D" parent="."]
+
+[node name="RespawnTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]

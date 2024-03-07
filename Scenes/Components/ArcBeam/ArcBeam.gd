@@ -3,6 +3,7 @@ extends RayCast2D
 
 @export var texture_color: Color = Color(0.38, 0.839, 0.929, 0.729) : set = set_texture_color, get = get_texture_color
 @export var line_width: int = 600 : set = set_line_width, get = get_line_width
+@export var beam_damage: float = 15.0 : set = set_beam_damage, get = get_beam_damage
 @onready var line: Line2D = $ArcBeamLine
 @onready var point: Node2D = $Point
 var max_distance: float = 5000.0
@@ -37,6 +38,7 @@ func _process(_delta: float) -> void:
 		node2.scale = Vector2(scale_factor, scale_factor)
 
 		# Handle Collision ---
+		# var body = get_collider()
 		var collision_point = to_local(get_collision_point())
 		line.points[1].x = collision_point.x
 		point.position.x = collision_point.x
@@ -52,11 +54,26 @@ func _process(_delta: float) -> void:
 		point.rotation = angle
 		point.show()
 
+		#apply_damage(beam_damage, body, collision_point)
+
 	else:
 		# Vary the width
 		line.width = get_line_width() * 0.25
 		line.points[1].x = target_position.x
 		point.hide()
+
+func apply_damage(damage, body, _collision_point) -> void:
+	if body.has_method("take_damage"):
+		var damage_template = Global.get_damage_template()
+		damage_template.damage_type = "laser"
+		damage_template.damage = damage
+		body.take_damage(damage_template)
+
+func set_beam_damage(val: float) -> void:
+	beam_damage = val
+
+func get_beam_damage() -> float:
+	return beam_damage
 
 func  set_texture_color(c:Color) -> void:
 	texture_color = c

@@ -118,7 +118,7 @@ var targetYOffset: float = 100.0  # Set your desired target Y offset
 var lerpSpeed: float = 0.1  # Adjust the speed of the lerp (0.0 to 1.0)
 func _process(delta: float) -> void:
 
-	#Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
+	Global.apply_tether_force(delta, self, Vector2(64.0, 64.0), max_distance, 3.0)
 	shoot()
 
 	if is_aiming:
@@ -255,7 +255,7 @@ func show_laser(val) -> void:
 var arc_beam_pause = false
 func shoot() -> void:
 	if can_shoot and is_shooting:
-		print(current_gun, ": ", all_guns[current_gun].get_meta("gun_name"))
+		#print(current_gun, ": ", all_guns[current_gun].get_meta("gun_name"))
 		match all_guns[current_gun].get_meta("gun_name"):
 			"Pistol": fire_pistol()            #0
 			"Uzi": fire_uzi()                  #1
@@ -360,10 +360,13 @@ func fire_laser() -> void:
 
 		if arc_beam.is_colliding() and !arc_beam_pause:
 			arc_beam_pause = true
-			var dmg_lbl= DAMAGE_NUMBER.instantiate()
-			get_parent().add_child(dmg_lbl)
-			dmg_lbl.global_position = arc_beam.get_collision_point()
-			dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
+			arc_beam.apply_damage(15.0, arc_beam.get_collider(), arc_beam.get_collision_point())
+
+			#var dmg_lbl= DAMAGE_NUMBER.instantiate()
+			#get_parent().add_child(dmg_lbl)
+			#dmg_lbl.global_position = arc_beam.get_collision_point()
+			#dmg_lbl.set_label(str(15), Color(1, 0.251, 0.169, 1))
+
 			await Global.timeout(0.25)
 			arc_beam_pause = false
 	else:
@@ -371,7 +374,6 @@ func fire_laser() -> void:
 		arc_beam.visible = false
 		arc_beam_pause = false
 	pass
-
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res

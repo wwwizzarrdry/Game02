@@ -1,10 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://ds2cinxxbq0xe"]
+[gd_scene load_steps=12 format=3 uid="uid://ds2cinxxbq0xe"]
 
 [ext_resource type="Script" path="res://Scenes/Levels/World/world.gd" id="1_60onx"]
 [ext_resource type="TileSet" uid="uid://dm83apox5bxft" path="res://Scenes/Levels/Tileset_128x128.tres" id="1_jlj6o"]
 [ext_resource type="Texture2D" uid="uid://ek4g8hogdodl" path="res://Assets/Images/Backgrounds/pit_trap.jpg" id="2_bxd32"]
 [ext_resource type="Texture2D" uid="uid://bfy1smbtvcwwl" path="res://Assets/Images/Tilesets/barricade.png" id="3_f56xd"]
-[ext_resource type="Texture2D" uid="uid://ca3yx2lwap5q7" path="res://Assets/Images/Sprites/AI Sprites/Void-Monster.png" id="5_70c7y"]
+[ext_resource type="PackedScene" uid="uid://dy3hh2rap2nf0" path="res://Scenes/Components/Enemies/VoidMonster/VoidMonster.tscn" id="5_hboos"]
 [ext_resource type="Shader" path="res://Shaders/post_processing/vignette_postprocess.gdshader" id="6_nd0lw"]
 [ext_resource type="Texture2D" uid="uid://bxcha3ff4p6rk" path="res://Assets/Images/Textures/circle.png" id="7_nqgoy"]
 
@@ -16,9 +16,6 @@ radius = 1200.67
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n7q4y"]
 radius = 1828.15
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_f7ajj"]
-radius = 180.011
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yn87a"]
 shader = ExtResource("6_nd0lw")
@@ -67,23 +64,7 @@ collision_mask = 3
 shape = SubResource("CircleShape2D_n7q4y")
 debug_color = Color(0.584314, 0.388235, 0.980392, 0.419608)
 
-[node name="VoidMonster" type="CharacterBody2D" parent="WorldOffset"]
-collision_layer = 2
-collision_mask = 9
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldOffset/VoidMonster"]
-shape = SubResource("CircleShape2D_f7ajj")
-debug_color = Color(0.952941, 0.133333, 0.443137, 0.419608)
-
-[node name="Sprite2D" type="Sprite2D" parent="WorldOffset/VoidMonster"]
-texture = ExtResource("5_70c7y")
-offset = Vector2(-7, 0)
-
-[node name="Front" type="Marker2D" parent="WorldOffset/VoidMonster/Sprite2D"]
-position = Vector2(201, 7)
-
-[node name="RayCast2D" type="RayCast2D" parent="WorldOffset/VoidMonster/Sprite2D"]
-target_position = Vector2(610, 1)
+[node name="VoidMonster" parent="WorldOffset" instance=ExtResource("5_hboos")]
 
 [node name="RingDotTimer" type="Timer" parent="WorldOffset"]
 

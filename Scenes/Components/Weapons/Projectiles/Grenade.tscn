@@ -2,11 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://0fobti44i1dr" path="res://Scenes/Components/Weapons/Grenade.tres" id="1_agvxv"]
 [ext_resource type="Script" path="res://Scenes/Components/Weapons/Projectiles/grenade.gd" id="1_btnao"]
+[ext_resource type="PhysicsMaterial" uid="uid://dlpuioout87c6" path="res://Scenes/Components/Weapons/Projectiles/Grenade_Physics_Material.tres" id="1_ne7so"]
 [ext_resource type="Shader" path="res://Shaders/outline_shader.gdshader" id="2_etrrv"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ar6c3"]
-bounce = 50.0
-absorbent = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mb3sg"]
 shader = ExtResource("2_etrrv")
@@ -57,7 +54,7 @@ _data = {
 collision_layer = 8
 collision_mask = 14
 mass = 3.0
-physics_material_override = SubResource("PhysicsMaterial_ar6c3")
+physics_material_override = ExtResource("1_ne7so")
 gravity_scale = 0.0
 inertia = 1.0
 contact_monitor = true
@@ -74,6 +71,8 @@ texture = ExtResource("1_agvxv")
 shape = SubResource("CircleShape2D_2kf5f")
 
 [node name="Area2D" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 15
 
 [node name="DamageArea" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_wiv6o")
