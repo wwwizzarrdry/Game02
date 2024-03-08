@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ds2cinxxbq0xe"]
+[gd_scene load_steps=13 format=3 uid="uid://ds2cinxxbq0xe"]
 
 [ext_resource type="Script" path="res://Scenes/Levels/World/world.gd" id="1_60onx"]
 [ext_resource type="TileSet" uid="uid://dm83apox5bxft" path="res://Scenes/Levels/Tileset_128x128.tres" id="1_jlj6o"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dy3hh2rap2nf0" path="res://Scenes/Components/Enemies/VoidMonster/VoidMonster.tscn" id="5_hboos"]
 [ext_resource type="Shader" path="res://Shaders/post_processing/vignette_postprocess.gdshader" id="6_nd0lw"]
 [ext_resource type="Texture2D" uid="uid://bxcha3ff4p6rk" path="res://Assets/Images/Textures/circle.png" id="7_nqgoy"]
+[ext_resource type="Texture2D" uid="uid://dajpsmf2c58i7" path="res://Assets/Images/Sprites/AI Sprites/Anchor-1r.png" id="8_tll0w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nxgyk"]
 size = Vector2(1181, 1180)
@@ -58,7 +59,6 @@ shape = SubResource("CircleShape2D_0m673")
 
 [node name="Ring" type="Area2D" parent="WorldOffset"]
 collision_layer = 4
-collision_mask = 3
 
 [node name="RingEdge" type="CollisionShape2D" parent="WorldOffset/Ring"]
 shape = SubResource("CircleShape2D_n7q4y")
@@ -74,6 +74,16 @@ position = Vector2(86.0001, 18.4996)
 scale = Vector2(135.66, 135.57)
 texture = ExtResource("7_nqgoy")
 
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="EnemySpawner" type="Sprite2D" parent="Enemies"]
+position = Vector2(-1307, 64)
+texture = ExtResource("8_tll0w")
+
+[node name="EnemySpawnerTimer" type="Timer" parent="Enemies/EnemySpawner"]
+wait_time = 2.0
+autostart = true
+
 [connection signal="body_entered" from="WorldOffset/PitTrap/Pit" to="." method="_on_pit_body_entered"]
 [connection signal="body_exited" from="WorldOffset/PitTrap/Pit" to="." method="_on_pit_body_exited"]
 [connection signal="body_entered" from="WorldOffset/PitTrap/Danger" to="." method="_on_danger_body_entered"]
@@ -81,3 +91,4 @@ texture = ExtResource("7_nqgoy")
 [connection signal="body_entered" from="WorldOffset/Ring" to="." method="_on_ring_body_entered"]
 [connection signal="body_exited" from="WorldOffset/Ring" to="." method="_on_ring_body_exited"]
 [connection signal="timeout" from="WorldOffset/RingDotTimer" to="." method="_on_ring_dot_timer_timeout"]
+[connection signal="timeout" from="Enemies/EnemySpawner/EnemySpawnerTimer" to="." method="_on_enemy_spawner_timer_timeout"]

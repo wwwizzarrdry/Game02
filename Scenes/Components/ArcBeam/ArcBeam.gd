@@ -64,7 +64,7 @@ func _process(_delta: float) -> void:
 
 func apply_damage(damage, body, _collision_point) -> void:
 	if body.has_method("take_damage"):
-		var damage_template = Global.get_damage_template()
+		var damage_template = Global.get_damage_template(self)
 		damage_template.damage_type = "laser"
 		damage_template.damage = damage
 		body.take_damage(damage_template)

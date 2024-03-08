@@ -43,7 +43,7 @@ func fire_grenade() -> void:
 		g.position = $Sprite2D/Front.global_position
 		g.linear_velocity = direction.normalized() * g.speed
 		get_tree().current_scene.get_node("Projectiles").add_child(g)
-		await Global.timeout(0.85)
+		await Global.timeout(0.15)
 		can_shoot = true
 	pass
 
@@ -57,7 +57,7 @@ func take_damage(data):
 
 	if current_shield > 0:
 		var dmg_lbl1 = DAMAGE_NUMBER.instantiate()
-		add_child(dmg_lbl1)
+		get_parent().add_child(dmg_lbl1)
 		dmg_lbl1.global_position = self.global_position
 
 		if remaining_damage == 0:

@@ -1,6 +1,8 @@
 extends Node2D
 
 const magic = preload("res://Particles/Magic.tscn")
+const mob = preload("res://Scenes/Components/Enemies/Mob/Mob.tscn")
+
 @onready var tilemap = $TileMap
 @onready var barricade: Sprite2D = $WorldOffset/Barricade
 @onready var ring_edge: CollisionShape2D = $WorldOffset/Ring/RingEdge
@@ -9,6 +11,7 @@ const magic = preload("res://Particles/Magic.tscn")
 @onready var pit_area: Area2D = $WorldOffset/PitTrap/Pit
 @onready var void_monster: CharacterBody2D = $WorldOffset/VoidMonster
 @onready var vignette: Sprite2D = $Vignette
+
 
 var center_offset = Vector2(64, 64)
 var default_radius: float = 5000.0
@@ -183,9 +186,9 @@ func scale_to_closest_player(from_node: CharacterBody2D, delta: float):
 	from_node.scale = Vector2(_scale, _scale)
 
 	# Rotate to face the target
-	var rotation_speed = 0.1
+	var rotation_speed = 10.0
 	var max_rotation_speed = 60.0
-	var acceleration = 30.0
+	var acceleration = 100.0
 
 	var target_position: Vector2 = target[0].position # the actual position of the closest target
 	var target_angle: float = from_node.global_position.angle_to_point(target_position)
@@ -251,7 +254,7 @@ func _on_pit_body_entered(body) -> void:
 	if body.is_in_group("player"):
 		Signals.player_entered_pit.emit(body)
 		if body.has_method("take_damage"):
-			var damage_template = Global.get_damage_template()
+			var damage_template = Global.get_damage_template(self)
 			damage_template.damage_type = "pit"
 			damage_template.damage = 50.0
 			body.take_damage(damage_template)
@@ -292,7 +295,28 @@ func apply_ring_damage():
 	var ring_damage = 10 + (default_radius/clamp(ring_radius, 1, default_radius))
 	for b in bodies_outside_ring:
 		if b.has_method("take_damage"):
-			var damage_template = Global.get_damage_template()
+			var damage_template = Global.get_damage_template(self)
 			damage_template.damage_type = "ring"
 			damage_template.damage = ring_damage
 			b.take_damage(damage_template)
+
+func _on_enemy_spawner_timer_timeout() -> void:
+	spawn_at_random_point()
+	$Enemies/EnemySpawner/EnemySpawnerTimer.start()
+
+
+# Gives you a random Vector2 within the radius of a circle
+func spawn_at_random_point() -> void:
+	var center: Vector2 = center_offset
+	var radius: float = ring_radius
+	var angle = randf() * 2 * PI
+	var distance = randf() * radius
+	var x = center.x + distance * cos(angle)
+	var y = center.y + distance * sin(angle)
+	var spawn_location = Vector2(x, y)
+
+	var enemy = mob.instantiate()
+	enemy.center = center
+	enemy.radius = distance
+	enemy.position = spawn_location
+	$Enemies.add_child(enemy)

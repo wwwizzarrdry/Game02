@@ -302,12 +302,11 @@ func fire_shotgun() -> void:
 			rays[i].enabled = true
 			rays[i].force_raycast_update()
 			if rays[i].is_colliding():
-				print("Hit: ", rays[i].get_collider())
-				play_audio("player_health_damaged")
-				var dmg_lbl = DAMAGE_NUMBER.instantiate()
-				get_parent().add_child(dmg_lbl)
-				dmg_lbl.global_position = rays[i].get_collision_point()
-				dmg_lbl.set_label("*", Color(1,1,1))
+				if rays[i].get_collider().has_method("take_damage"):
+					var damage_template = Global.get_damage_template(self)
+					damage_template.damage_type = "shotgun"
+					damage_template.damage = 25
+					rays[i].get_collider().take_damage(damage_template)
 			rays[i].enabled = false
 
 	await Global.timeout(1.8)
@@ -371,7 +370,7 @@ func fire_laser() -> void:
 
 		if arc_beam.is_colliding() and !arc_beam_pause:
 			arc_beam_pause = true
-			arc_beam.apply_damage(15.0, arc_beam.get_collider(), arc_beam.get_collision_point())
+			arc_beam.apply_damage(25.0, arc_beam.get_collider(), arc_beam.get_collision_point())
 
 			#var dmg_lbl= DAMAGE_NUMBER.instantiate()
 			#get_parent().add_child(dmg_lbl)
@@ -387,15 +386,15 @@ func fire_laser() -> void:
 	pass
 
 func generate_shotgun_spread(num_pellets, radius, distance, num_center_pellets):
-	var positions = []
+	var pellets = []
 	var center = Vector2(cos(self.rotation), sin(self.rotation)) * distance
 	for i in range(num_center_pellets):
-		positions.append(center)
+		pellets.append(center)
 	for i in range(num_pellets - num_center_pellets):
 		var angle = randf() * 2 * PI
-		var position = center + Vector2(cos(angle), sin(angle)) * radius
-		positions.append(position)
-	return positions
+		var pos = center + Vector2(cos(angle), sin(angle)) * radius
+		pellets.append(pos)
+	return pellets
 
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res

@@ -21,8 +21,8 @@ func get_root_viewport_size():
 	var vs = vp.get_viewport_rect().size
 	return vs
 
-func get_damage_template() -> Dictionary:
-	return {"damage_type": "", "damage": 0}
+func get_damage_template(caller) -> Dictionary:
+	return {"damage_from": caller, "damage_type": "", "damage": 0}
 
 func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_dist: float, mass: float):
 

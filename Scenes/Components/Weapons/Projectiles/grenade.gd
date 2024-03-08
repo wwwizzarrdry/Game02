@@ -38,7 +38,7 @@ func _on_timer_timeout() -> void:
 	# Deal damage to all enemies in damage radius
 	for body in bodies_in_damage_area:
 		if body.has_method("take_damage"):
-			var damage_template = Global.get_damage_template()
+			var damage_template = Global.get_damage_template(self)
 			damage_template.damage_type = "grenade"
 			damage_template.damage = 50.0
 			body.take_damage(damage_template)

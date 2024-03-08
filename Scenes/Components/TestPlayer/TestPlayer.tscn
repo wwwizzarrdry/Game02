@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dppgsdv33qh5"]
+[gd_scene load_steps=29 format=3 uid="uid://dppgsdv33qh5"]
 
 [ext_resource type="Script" path="res://Scenes/Components/TestPlayer/test_player.gd" id="1_g7upe"]
 [ext_resource type="Texture2D" uid="uid://ciudddq7n0h2r" path="res://Scenes/Components/TestPlayer/BodyParts/Backpack_Yellow.tres" id="2_2u563"]
@@ -27,6 +27,9 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mpxel"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_yt4si"]
+radius = 716.715
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_p7thj"]
 atlas = ExtResource("7_stadi")
 region = Rect2(767.835, 587.702, 58.2413, 117.58)
@@ -42,11 +45,17 @@ shader_parameter/width_speed = 0.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 scale = Vector2(0.5, 0.5)
-collision_mask = 14
+collision_mask = 12
 script = ExtResource("1_g7upe")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_mpxel")
+
+[node name="PlayerPresence" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerPresence"]
+shape = SubResource("CircleShape2D_yt4si")
 
 [node name="Laser" parent="." instance=ExtResource("2_huri3")]
 visible = false
@@ -121,7 +130,6 @@ metadata/position_locked = false
 [node name="Guns" type="Node2D" parent="BodyParts"]
 
 [node name="Pistol" type="Sprite2D" parent="BodyParts/Guns"]
-visible = false
 position = Vector2(190, 20)
 rotation = -1.5708
 texture = SubResource("AtlasTexture_p7thj")
@@ -157,6 +165,7 @@ position = Vector2(-0.000606537, 168)
 rotation = 1.5708
 
 [node name="Shotgun" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
 position = Vector2(180, 20)
 rotation = -1.5708
 texture = ExtResource("6_ncyvl")
@@ -273,14 +282,13 @@ target_position = Vector2(3000, -600)
 collision_mask = 2
 
 [node name="Machinegun" type="Sprite2D" parent="BodyParts/Guns"]
-visible = false
-position = Vector2(200, 10)
+position = Vector2(220, 10)
 rotation = -1.5708
 texture = ExtResource("11_hotq8")
 metadata/gun_name = "Machinegun"
 
 [node name="MuzzleMachinegun" type="Marker2D" parent="BodyParts/Guns/Machinegun"]
-position = Vector2(-8.34465e-06, 190)
+position = Vector2(0, 170)
 
 [node name="Sniper" type="Sprite2D" parent="BodyParts/Guns"]
 visible = false
@@ -351,13 +359,16 @@ metadata/position_locked = false
 
 [node name="PlayerShieldDamaged" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_8cd54")
+volume_db = -10.0
 max_polyphony = 3
 
 [node name="PlayerShieldBroken" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("12_ipw16")
+volume_db = -10.0
 
 [node name="PlayerHealthDamaged" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("13_6043p")
+volume_db = -10.0
 max_polyphony = 3
 
 [node name="PlayerDeath" type="AudioStreamPlayer2D" parent="."]
