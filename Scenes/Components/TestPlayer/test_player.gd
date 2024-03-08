@@ -51,7 +51,6 @@ func get_shield() -> float:
 @onready var laser: RayCast2D = $Laser
 @onready var arc_beam: RayCast2D = $BodyParts/Guns/Laser/ArcBeam
 
-
 # Projectiles
 @onready var grenade_projectile: PackedScene = preload("res://Scenes/Components/Weapons/Projectiles/Grenade.tscn")
 @onready var DAMAGE_NUMBER = preload("res://Scenes/Components/DamageNumber/DamageNumber.tscn")
@@ -234,7 +233,6 @@ func toggle_sprint() -> void:
 func set_move_speed(s) -> void:
 	speed = s
 
-
 func change_weapons() -> void:
 	is_shooting = false
 	var next_gun = wrap(current_gun + 1, 0, all_guns.size())
@@ -297,9 +295,22 @@ func fire_rifle() -> void:
 	pass
 
 func fire_shotgun() -> void:
-	print("Fire Shotgun")
 	can_shoot = false
-	await Global.timeout(1.48)
+	var rays = shotgun.get_children()
+	for i in range(1, rays.size()):
+		if rays[i] is RayCast2D:
+			rays[i].enabled = true
+			rays[i].force_raycast_update()
+			if rays[i].is_colliding():
+				print("Hit: ", rays[i].get_collider())
+				play_audio("player_health_damaged")
+				var dmg_lbl = DAMAGE_NUMBER.instantiate()
+				get_parent().add_child(dmg_lbl)
+				dmg_lbl.global_position = rays[i].get_collision_point()
+				dmg_lbl.set_label("*", Color(1,1,1))
+			rays[i].enabled = false
+
+	await Global.timeout(1.8)
 	can_shoot = true
 	pass
 
@@ -375,6 +386,17 @@ func fire_laser() -> void:
 		arc_beam_pause = false
 	pass
 
+func generate_shotgun_spread(num_pellets, radius, distance, num_center_pellets):
+	var positions = []
+	var center = Vector2(cos(self.rotation), sin(self.rotation)) * distance
+	for i in range(num_center_pellets):
+		positions.append(center)
+	for i in range(num_pellets - num_center_pellets):
+		var angle = randf() * 2 * PI
+		var position = center + Vector2(cos(angle), sin(angle)) * radius
+		positions.append(position)
+	return positions
+
 func set_outfit(part: String, res: AtlasTexture) -> void:
 	player_skin[part] = res
 
@@ -385,7 +407,6 @@ func random_outfit():
 	arm_right.texture = outfits.Arm_Right[r]
 	arm_left.texture = outfits.Arm_Left[r]
 	head.texture = outfits.Head[r]
-
 
 func take_damage(data):
 	print(name + " took " + data.damage_type + " damage for " + str(data.damage) + "HP!")
@@ -431,7 +452,6 @@ func take_damage(data):
 
 	print("Shield: ", current_shield)
 	print("Health: ", current_health)
-
 
 func play_audio(val: String) -> void:
 	match val:

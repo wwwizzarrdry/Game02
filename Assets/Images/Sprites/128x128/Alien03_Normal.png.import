@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://biukvplwo4ngh"
-path="res://.godot/imported/Weapons.png-f75fee90ab597656211563fb6aa6843b.ctex"
+uid="uid://c5od1pn8n5onf"
+path="res://.godot/imported/Alien03_Normal.png-7feddafa08e70ae99922b1c3ea6fb077.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/Sprites/128x128/Weapons.png"
-dest_files=["res://.godot/imported/Weapons.png-f75fee90ab597656211563fb6aa6843b.ctex"]
+source_file="res://Assets/Images/Sprites/128x128/Alien03_Normal.png"
+dest_files=["res://.godot/imported/Alien03_Normal.png-7feddafa08e70ae99922b1c3ea6fb077.ctex"]
 
 [params]
 

@@ -157,7 +157,6 @@ position = Vector2(-0.000606537, 168)
 rotation = 1.5708
 
 [node name="Shotgun" type="Sprite2D" parent="BodyParts/Guns"]
-visible = false
 position = Vector2(180, 20)
 rotation = -1.5708
 texture = ExtResource("6_ncyvl")
@@ -167,6 +166,111 @@ metadata/position_locked = false
 [node name="MuzzleShotgun" type="Marker2D" parent="BodyParts/Guns/Shotgun"]
 position = Vector2(-0.000650406, 180)
 rotation = 1.5708
+
+[node name="ShotgunRayCast" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 50)
+collision_mask = 2
+
+[node name="ShotgunRayCast15" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(3.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -7)
+collision_mask = 2
+
+[node name="ShotgunRayCast2" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(5.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 600)
+collision_mask = 2
+
+[node name="ShotgunRayCast3" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 500)
+collision_mask = 2
+
+[node name="ShotgunRayCast4" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 400)
+collision_mask = 2
+
+[node name="ShotgunRayCast5" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(5.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 300)
+collision_mask = 2
+
+[node name="ShotgunRayCast6" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 200)
+collision_mask = 2
+
+[node name="ShotgunRayCast7" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, 100)
+collision_mask = 2
+
+[node name="ShotgunRayCast8" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -50)
+collision_mask = 2
+
+[node name="ShotgunRayCast9" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(5.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -100)
+collision_mask = 2
+
+[node name="ShotgunRayCast10" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -200)
+collision_mask = 2
+
+[node name="ShotgunRayCast11" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -300)
+collision_mask = 2
+
+[node name="ShotgunRayCast12" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(5.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -400)
+collision_mask = 2
+
+[node name="ShotgunRayCast13" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -500)
+collision_mask = 2
+
+[node name="ShotgunRayCast14" type="RayCast2D" parent="BodyParts/Guns/Shotgun"]
+position = Vector2(1.99872, 180)
+rotation = 1.5708
+enabled = false
+target_position = Vector2(3000, -600)
+collision_mask = 2
 
 [node name="Machinegun" type="Sprite2D" parent="BodyParts/Guns"]
 visible = false
@@ -231,6 +335,7 @@ texture_color = Color(0, 0.984314, 3.36863, 1)
 line_width = 2000
 
 [node name="Grenade" type="Sprite2D" parent="BodyParts/Guns"]
+visible = false
 position = Vector2(166, 14)
 texture = ExtResource("16_efv0q")
 metadata/gun_name = "Grenade"
