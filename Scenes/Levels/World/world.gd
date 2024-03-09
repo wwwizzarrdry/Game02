@@ -302,13 +302,14 @@ func apply_ring_damage():
 
 func _on_enemy_spawner_timer_timeout() -> void:
 	spawn_at_random_point()
+	$Enemies/EnemySpawner/EnemySpawnerTimer.wait_time = randf_range(0.1, 3)
 	$Enemies/EnemySpawner/EnemySpawnerTimer.start()
 
 
 # Gives you a random Vector2 within the radius of a circle
 func spawn_at_random_point() -> void:
 	var center: Vector2 = center_offset
-	var radius: float = ring_radius
+	var radius: float = ring_radius - 512
 	var angle = randf() * 2 * PI
 	var distance = randf() * radius
 	var x = center.x + distance * cos(angle)

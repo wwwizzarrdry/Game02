@@ -47,37 +47,42 @@ var turn_speed: float = 30.0  # Adjust as needed
 
 func _ready() -> void:
 	$Sprite2D.texture = skins[randi_range(0, skins.size()-1)]
-	nav_agent.path_desired_distance = 128
-	nav_agent.target_desired_distance = 128
+	nav_agent.path_desired_distance = 256
+	nav_agent.target_desired_distance = 256
 	home_position = self.global_position
-	get_radius_points()
+	set_radius_points()
 	set_next_target()
 
 func _process(delta: float) -> void:
+	if is_chasing_player:
+		speed = 500
+		$Sprite2D/Shadow.self_modulate = Color(1, 0.165, 0.165, 0.51)
+	else:
+		speed = 300
+		$Sprite2D/Shadow.self_modulate = Color(0.165, 0.165, 0.165, 0.51)
+
 	if nav_agent.is_navigation_finished():
 		return
 
-	if is_chasing_player:
-		speed = 500
-		$Lights/PointLight2D.color =Color(1, 0, 0)
-	else:
-		speed = 300
-		$Lights/PointLight2D.color = Color(0.035, 0.839, 1)
-
-
 	var axis = to_local(nav_agent.get_next_path_position()).normalized()
 	velocity = axis * speed
+	var intended_velocity = velocity
+	nav_agent.set_velocity_forced(intended_velocity)
 
 	# Look rotation
 	var target_position: Vector2 = nav_agent.get_next_path_position()
 	var target_angle: float = $Sprite2D.global_position.angle_to_point(target_position) + 80
 	$Sprite2D.rotation = lerp_angle($Sprite2D.rotation, target_angle, turn_speed * delta)
 
+
 	move_and_slide()
 
+func change_to_explosion_texture() -> void:
+	$Sprite2D.texture = load("res://Assets/Images/Sprites/Explo01.png")
 
 func take_damage(data):
 	target_node = data.damage_from
+	is_chasing_player = true
 
 	var damage = data.damage
 	var current_shield = get_shield()
@@ -111,10 +116,15 @@ func take_damage(data):
 			current_health = get_health()
 
 	if current_health == 0:
+		$AnimationPlayer.active = true
+		$AnimationPlayer.play("Enemy_Explode")
+
+func remove() -> void:
+	if is_inside_tree():
 		queue_free()
 
-# Create array of points along this enemie's spawn radius
-func get_radius_points():
+# Enemie's sentry roam radius
+func set_radius_points():
 	# Number of points in the circle
 	var points_count = 180
 	for i in range(points_count):
@@ -144,15 +154,16 @@ func _on_recalculate_timer_timeout() -> void:
 func _on_aggro_range_area_entered(area: Area2D) -> void:
 	is_chasing_player = true
 	target_node = area.owner
-	$Lights/PointLight2D.color =Color(1, 0, 0)
 
 func _on_deaggro_range_area_exited(area: Area2D) -> void:
 	if area.owner == target_node:
 		target_node = null
 		is_chasing_player = false
-		$Lights/PointLight2D.color = Color(0.035, 0.839, 1)
 		set_next_target()
 
 func _on_navigation_agent_2d_navigation_finished() -> void:
 	# Called when the agent reaches the current target
 	set_next_target()
+
+func _on_navigation_agent_2d_velocity_computed(safe_velocity: Vector2) -> void:
+	velocity = safe_velocity

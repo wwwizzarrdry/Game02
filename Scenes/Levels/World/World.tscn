@@ -81,7 +81,7 @@ position = Vector2(-1307, 64)
 texture = ExtResource("8_tll0w")
 
 [node name="EnemySpawnerTimer" type="Timer" parent="Enemies/EnemySpawner"]
-wait_time = 2.0
+wait_time = 1.975
 autostart = true
 
 [connection signal="body_entered" from="WorldOffset/PitTrap/Pit" to="." method="_on_pit_body_entered"]

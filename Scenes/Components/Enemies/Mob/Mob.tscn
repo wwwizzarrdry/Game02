@@ -1,19 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://dqjymky3d7xhk"]
+[gd_scene load_steps=11 format=3 uid="uid://dqjymky3d7xhk"]
 
 [ext_resource type="Script" path="res://Scenes/Components/Enemies/Mob/mob.gd" id="1_clus6"]
+[ext_resource type="Texture2D" uid="uid://mp3o3e3lldus" path="res://Assets/Images/Sprites/Explo01.png" id="2_en8mc"]
 [ext_resource type="Texture2D" uid="uid://dm57qdcrheihy" path="res://Assets/Images/Sprites/128x128/Alien01.png" id="2_f1sjq"]
-[ext_resource type="Texture2D" uid="uid://bvr04o1jiowfa" path="res://Assets/Images/Sprites/128x128/Alien01_Normal.png" id="3_54nhg"]
-[ext_resource type="Texture2D" uid="uid://bvapleiwtu5s5" path="res://Assets/Images/Sprites/128x128/Alien01_Specular.png" id="4_e2ycc"]
 [ext_resource type="Texture2D" uid="uid://c0t71hpsefl3l" path="res://Assets/Images/Textures/light_fade.png" id="5_ak7dj"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yoytr"]
 radius = 48.0104
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_ttcs4"]
-diffuse_texture = ExtResource("2_f1sjq")
-normal_texture = ExtResource("3_54nhg")
-specular_texture = ExtResource("4_e2ycc")
-specular_color = Color(0.0627451, 0.443137, 0.517647, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8xdvp"]
 radius = 329.514
@@ -21,10 +14,134 @@ radius = 329.514
 [sub_resource type="CircleShape2D" id="CircleShape2D_fufn5"]
 radius = 500.0
 
+[sub_resource type="Animation" id="Animation_eghyd"]
+resource_name = "Enemy_Explode"
+length = 0.5
+step = 0.01
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"remove"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Explosion:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Explosion:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Explosion:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.02, 0.2, 0.49),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1), Vector2(2, 2), Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("CollisionShape2D:disabled")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath(".:speed")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Navigation/NavigationAgent2D:max_speed")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.01]
+}
+
+[sub_resource type="Animation" id="Animation_g6qda"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Explosion:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_blgct"]
+_data = {
+"Enemy_Explode": SubResource("Animation_eghyd"),
+"RESET": SubResource("Animation_g6qda")
+}
+
 [node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("nav_agent")]
 scale = Vector2(2, 2)
 collision_layer = 2
-collision_mask = 8
+collision_mask = 10
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_clus6")
@@ -33,34 +150,14 @@ nav_agent = NodePath("Navigation/NavigationAgent2D")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_yoytr")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("CanvasTexture_ttcs4")
-
-[node name="Arrow" type="Sprite2D" parent="Sprite2D"]
-self_modulate = Color(0.164706, 0.164706, 0.164706, 0.509804)
-show_behind_parent = true
-rotation = 1.5708
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("5_ak7dj")
-
-[node name="Lights" type="Node2D" parent="."]
-
-[node name="PointLight2D" type="PointLight2D" parent="Lights"]
-position = Vector2(1, -0.999999)
-scale = Vector2(0.048, 0.0506966)
-color = Color(0.035, 0.839, 1, 1)
-energy = 16.0
-blend_mode = 2
-shadow_color = Color(0.0705882, 0.462745, 0.541176, 1)
-shadow_filter = 1
-shadow_filter_smooth = 2.1
-shadow_item_cull_mask = 0
-texture = ExtResource("5_ak7dj")
-
 [node name="Navigation" type="Node2D" parent="."]
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="Navigation"]
-path_max_distance = 1000.0
+path_max_distance = 2000.0
+avoidance_enabled = true
+radius = 256.0
+neighbor_distance = 512.0
+max_speed = 500.0
 
 [node name="RecalculateTimer" type="Timer" parent="Navigation"]
 wait_time = 0.1
@@ -83,7 +180,29 @@ input_pickable = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Aggro/DeaggroRange"]
 shape = SubResource("CircleShape2D_fufn5")
 
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_f1sjq")
+
+[node name="Shadow" type="Sprite2D" parent="Sprite2D"]
+self_modulate = Color(1, 0.164706, 0.164706, 0.509804)
+show_behind_parent = true
+texture = ExtResource("5_ak7dj")
+
+[node name="Explosion" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("2_en8mc")
+hframes = 4
+vframes = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+active = false
+libraries = {
+"": SubResource("AnimationLibrary_blgct")
+}
+
 [connection signal="navigation_finished" from="Navigation/NavigationAgent2D" to="." method="_on_navigation_agent_2d_navigation_finished"]
+[connection signal="velocity_computed" from="Navigation/NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
 [connection signal="timeout" from="Navigation/RecalculateTimer" to="." method="_on_recalculate_timer_timeout"]
 [connection signal="area_entered" from="Aggro/AggroRange" to="." method="_on_aggro_range_area_entered"]
 [connection signal="area_exited" from="Aggro/DeaggroRange" to="." method="_on_deaggro_range_area_exited"]
