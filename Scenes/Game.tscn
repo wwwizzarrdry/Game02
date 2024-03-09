@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://be6gp0ug2w2wk"]
+[gd_scene load_steps=10 format=3 uid="uid://be6gp0ug2w2wk"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_tv522"]
 [ext_resource type="PackedScene" uid="uid://bdot2u8w1qo2k" path="res://Scenes/Components/Hud/Hud.tscn" id="2_bs2mv"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://dppgsdv33qh5" path="res://Scenes/Components/TestPlayer/TestPlayer.tscn" id="4_oerhk"]
 [ext_resource type="PackedScene" uid="uid://duqq3amqe8n28" path="res://Scenes/Components/WorldCamera/WorldCamera.tscn" id="5_y3p4o"]
 [ext_resource type="AudioStream" uid="uid://bknboaj2rcyw7" path="res://Assets/Audio/Music/Ludum Dare 30 - 02.ogg" id="6_i2o8u"]
+[ext_resource type="Script" path="res://addons/ropesim/RopeHandle.gd" id="7_jbns6"]
+[ext_resource type="Script" path="res://addons/ropesim/Rope.gd" id="8_egrai"]
 
 [sub_resource type="Environment" id="Environment_diyq2"]
 background_mode = 3
@@ -35,6 +37,20 @@ script = ExtResource("1_tv522")
 visible = true
 
 [node name="World" parent="." instance=ExtResource("3_8jpsd")]
+position = Vector2(-3, -17)
+
+[node name="Rope" type="Node2D" parent="."]
+script = ExtResource("8_egrai")
+stiffness = 1.0
+gravity = 0.25
+damping = 4.0
+line_width = 14.0
+color = Color(0.333333, 0.180392, 0, 1)
+
+[node name="RopeHandle" type="Marker2D" parent="."]
+script = ExtResource("7_jbns6")
+rope_path = NodePath("../Rope")
+precise = true
 
 [node name="Player" parent="." instance=ExtResource("4_oerhk")]
 position = Vector2(2639, 76)

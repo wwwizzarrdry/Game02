@@ -40,6 +40,10 @@ window/stretch/scale_mode="integer"
 movie_writer/movie_file="C:/Users/wwwiz/Videos/Godot.avi"
 naming/scene_name_casing=1
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/ropesim/plugin.cfg")
+
 [filesystem]
 
 import/blender/enabled=false

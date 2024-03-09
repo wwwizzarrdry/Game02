@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbts38nkl68m6"]
+
+[ext_resource type="Script" path="res://Scenes/Components/Player/player.gd" id="1_bes6q"]
+[ext_resource type="Texture2D" uid="uid://ccgb4cgx2n5xj" path="res://Assets/Images/Sprites/128x128/Player.png" id="1_kgvjd"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_bes6q")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+rotation = 1.5708
+polygon = PackedVector2Array(-0.789473, -9.66102, -2.10526, -8.30508, -3.15789, -6.27119, -3.68421, -4.23729, -3.68421, -3.05085, -4.73684, -3.05085, -8.94737, 2.37288, -8.42105, 3.38983, -10.2632, 6.10169, -7.36842, 9.83051, -3.68421, 6.94915, -2.89474, 9.32203, 7.52901e-07, 7.62712, 2.63158, 9.32203, 3.94737, 6.94915, 7.63158, 9.66102, 10.2632, 5.9322, 8.42105, 3.72881, 8.94737, 2.54237, 4.73684, -3.05085, 3.68421, -3.05085, 3.68421, -4.23729, 3.42105, -5.59322, 2.10526, -8.30508, 0.789474, -9.66102)
+
+[node name="Sprite2D" type="Sprite2D" parent="CollisionPolygon2D"]
+position = Vector2(1.1967e-13, -0.338983)
+scale = Vector2(0.263158, 0.338983)
+texture = ExtResource("1_kgvjd")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)

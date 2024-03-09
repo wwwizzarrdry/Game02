@@ -50,6 +50,7 @@ func get_shield() -> float:
 @onready var grenade: Sprite2D = $BodyParts/Guns/Grenade
 @onready var laser: RayCast2D = $Laser
 @onready var arc_beam: RayCast2D = $BodyParts/Guns/Laser/ArcBeam
+@onready var rope: Rope = $Rope
 
 # Projectiles
 @onready var grenade_projectile: PackedScene = preload("res://Scenes/Components/Weapons/Projectiles/Grenade.tscn")
@@ -90,7 +91,6 @@ func _ready() -> void:
 	Signals.player_exited_pit_danger_area.connect(_on_danger_area_exited)
 	Signals.player_entered_ring.connect(_on_player_entered_ring)
 	Signals.player_exited_ring.connect(_on_player_exited_ring)
-
 
 	backpack.texture = player_skin["backpack"]
 	shoulders.texture = player_skin["shoulders"]
@@ -309,7 +309,7 @@ func fire_shotgun() -> void:
 					rays[i].get_collider().take_damage(damage_template)
 			rays[i].enabled = false
 
-	await Global.timeout(1.8)
+	await Global.timeout(0.5)
 	can_shoot = true
 	pass
 

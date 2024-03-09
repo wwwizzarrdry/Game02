@@ -36,6 +36,7 @@ func apply_tether_force(delta: float, object: Node, center_point: Vector2, max_d
 		object.velocity += rope_vector.normalized() * -rope_force * delta / mass
 
 	if object.is_in_group("player"):
+		return
 		var distance = object.position.distance_to(center_point)
 		var ratio_of_max_distance = distance/max_dist
 		get_tree().current_scene.draw_max_distance_perimeter(center_point, max_dist, ratio_of_max_distance)

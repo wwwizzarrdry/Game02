@@ -46,7 +46,7 @@ func _process(_delta: float) -> void:
 func _draw():
 
 	# Draw Tether
-	draw_dashed_line(center_point, $Player.position, Color(0, 0, 1), 5.0, 20.0, true)
+	#draw_dashed_line(center_point, $Player.position, Color(0, 0, 1), 5.0, 20.0, true)
 
 	if show_max_dist_perimeter:
 		# Draw max distace perimeter
@@ -149,11 +149,15 @@ func draw_cam_rect(r):
 
 func _on_timer_timeout() -> void:
 	var radius = $Player.max_distance
+
 	if radius > 100:
-		radius = radius - 2.0
+		radius = radius - 6.0
 	else:
 		radius = 5000.0
 
+	$Rope.rope_length = radius - 1000
+	$Rope.num_segments = clamp(radius / 20, 1, 300)
+	$RopeHandle.position = $Player.global_position
 	$Player.max_distance = radius
 	$World.set_new_radius(radius)
 	$Timer.start()

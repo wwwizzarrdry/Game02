@@ -1,0 +1,53 @@
+[gd_scene load_steps=9 format=3 uid="uid://8gyme8cgodqg"]
+
+[ext_resource type="Texture2D" uid="uid://kscypg8mnd58" path="res://Assets/Images/Tilesets/Landscape/Burned Earth/1/1_diffuseOriginal.bmp" id="1_7e822"]
+[ext_resource type="Texture2D" uid="uid://btx85qo6bb46n" path="res://Assets/Images/Tilesets/Landscape/Burned Earth/1/1_normal.bmp" id="2_jaicr"]
+[ext_resource type="Texture2D" uid="uid://mm8vd3fin3m2" path="res://Assets/Images/Tilesets/Landscape/Burned Earth/1/1_metallic.bmp" id="3_4m7er"]
+[ext_resource type="Texture2D" uid="uid://ddoif600fgp8d" path="res://Assets/Images/Tilesets/Landscape/Burned Earth/1/1_ao.bmp" id="4_vmwvr"]
+[ext_resource type="PackedScene" uid="uid://bbts38nkl68m6" path="res://Scenes/Components/Player/Player.tscn" id="5_1f207"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_4i0q4"]
+diffuse_texture = ExtResource("1_7e822")
+normal_texture = ExtResource("2_jaicr")
+specular_texture = ExtResource("3_4m7er")
+specular_color = Color(0.388235, 0.415686, 0.427451, 1)
+
+[sub_resource type="TileSet" id="TileSet_daciv"]
+
+[sub_resource type="Environment" id="Environment_vcd8j"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(0.290196, 0.294118, 0.305882, 1)
+tonemap_mode = 3
+tonemap_exposure = 0.5
+tonemap_white = 2.0
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+glow_enabled = true
+glow_blend_mode = 4
+glow_hdr_threshold = 0.0
+glow_map_strength = 1.0
+glow_map = ExtResource("4_vmwvr")
+fog_enabled = true
+volumetric_fog_enabled = true
+
+[node name="Level01" type="Node2D"]
+
+[node name="Ground" type="Sprite2D" parent="."]
+texture_repeat = 2
+scale = Vector2(4.05273, 4.05273)
+texture = SubResource("CanvasTexture_4i0q4")
+region_enabled = true
+region_rect = Rect2(0, 0, 2048, 2048)
+
+[node name="Tilemap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_daciv")
+format = 2
+
+[node name="Player" parent="." instance=ExtResource("5_1f207")]
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vcd8j")

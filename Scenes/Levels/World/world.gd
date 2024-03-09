@@ -87,7 +87,7 @@ func set_new_radius(val: float):
 
 	# Defines the edge of the ring.
 	# Exiting thid area triggers ring damage
-	var ring_detection_radius: float = clamp(ring_radius - 256.0, 1.0, default_radius) # subtract a buffer zone
+	var ring_detection_radius: float = clamp(ring_radius - 300.0, 1.0, default_radius) # subtract a buffer zone
 	ring_edge.shape.radius = ring_detection_radius
 	update_particle_ring(val)
 
